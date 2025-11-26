@@ -202,6 +202,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ apiKey: process.env.GOOGLE_API || '' });
   });
 
+  // Weather API Routes
+  app.get("/api/weather/current", async (req, res) => {
+    try {
+      const lat = req.query.lat as string;
+      const lon = req.query.lon as string;
+      
+      if (!lat || !lon) {
+        return res.status(400).json({ error: "Latitude and longitude are required" });
+      }
+
+      const apiKey = process.env.OPENWEATHER_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "OpenWeather API key not configured" });
+      }
+
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`OpenWeather API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching current weather:", error);
+      res.status(500).json({ error: "Failed to fetch current weather" });
+    }
+  });
+
+  app.get("/api/weather/forecast", async (req, res) => {
+    try {
+      const lat = req.query.lat as string;
+      const lon = req.query.lon as string;
+      
+      if (!lat || !lon) {
+        return res.status(400).json({ error: "Latitude and longitude are required" });
+      }
+
+      const apiKey = process.env.OPENWEATHER_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "OpenWeather API key not configured" });
+      }
+
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`OpenWeather API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching forecast:", error);
+      res.status(500).json({ error: "Failed to fetch forecast" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
