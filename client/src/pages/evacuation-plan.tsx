@@ -529,7 +529,7 @@ export default function EvacuationPlan() {
             },
             {
               q: "What if I have mobility issues?",
-              a: "Contact MDRRMO at (054) 123-4567 for special assistance. They provide transportation for people with disabilities."
+              a: "Contact MDRRMO at 0917-772-5016 for special assistance. They provide transportation for people with disabilities."
             },
             {
               q: "How do I know which center to go to?",

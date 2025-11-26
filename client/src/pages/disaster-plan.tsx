@@ -1,73 +1,371 @@
 import { useLocation } from "wouter";
-import { ArrowLeft, Waves, Wind, Flame, ChevronRight } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  ArrowLeft,
+  Waves,
+  Wind,
+  Flame,
+  Mountain,
+  CloudLightning,
+  Calendar,
+  Clock,
+  Sun,
+} from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function DisasterPlan() {
   const [, setLocation] = useLocation();
 
+  const disasters = [
+    {
+      id: "storm-surge",
+      title: "Storm Surge & Tsunami",
+      icon: Waves,
+      color: "blue",
+      before: [
+        "Know your zone: Is your home, work, or school in a designated evacuation zone?",
+        "Plan multiple evacuation routes inland and to higher ground.",
+        "Learn the natural warning signs: for a tsunami, a strong, long earthquake, a sudden rise or fall in the ocean, a loud 'roaring' sound.",
+        "Heed official warnings immediately. Do not wait.",
+        "Prepare your Go-Bag and have it ready.",
+      ],
+      during: [
+        "IMMEDIATELY move inland and to high ground. Do not stay to watch.",
+        "Go as far inland and as high up as possible. Even a few stories in a sturdy concrete building can make a difference.",
+        "If you are in a boat and time allows, move out to deep water (tsunami waves are less destructive in deep ocean).",
+        "Do not return to the evacuation zone until authorities declare it safe.",
+      ],
+      after: [
+        "Stay away from the coast. Dangerous waves can continue for hours.",
+        "Stay away from damaged buildings, bridges, and infrastructure.",
+        "Be cautious of floodwaters, which may be contaminated or hide debris.",
+        "Listen to official sources for information about safe return and water safety.",
+      ],
+    },
+    {
+      id: "landslide",
+      title: "Landslide",
+      icon: Mountain,
+      color: "amber",
+      before: [
+        "Learn if your area is prone to landslides.",
+        "Watch for signs like new cracks in foundations, soil moving away from foundations, tilting trees or fences.",
+        "Consult a professional for land-use guidance (e.g., building retaining walls).",
+        "Plan an evacuation route to a safer area, not in the path of potential flow.",
+      ],
+      during: [
+        "If you are in a building, get to the highest level.",
+        "If you are outside and near the path of a landslide, run to the nearest high ground or shelter. Do not try to outrun it.",
+        "If escape is not possible, curl into a tight ball and protect your head.",
+      ],
+      after: [
+        "Stay away from the slide area. There may be a risk of additional slides.",
+        "Check for injured or trapped people near the slide, but do not enter the direct area. Call for professional help.",
+        "Be aware of potential flooding, as landslides can block waterways.",
+        "Report broken utility lines to the authorities.",
+      ],
+    },
+    {
+      id: "thunderstorm",
+      title: "Thunderstorm",
+      icon: CloudLightning,
+      color: "gray",
+      before: [
+        "Secure or bring inside outdoor objects that could be blown away.",
+        "Unplug sensitive electronic appliances to protect from power surges.",
+        "Listen to weather forecasts for Severe Thunderstorm Warnings.",
+      ],
+      during: [
+        "When Thunder Roars, Go Indoors! There is no safe place outside.",
+        "Avoid corded phones, plumbing, and electrical appliances as lightning can travel through wiring and pipes.",
+        "Stay away from windows and doors.",
+        "If you are in a vehicle, it is a safe alternative. Avoid touching the metal frame.",
+        "If you are caught outside with no shelter, avoid isolated trees, hilltops, and open fields. Crouch low in a ravine or valley.",
+      ],
+      after: [
+        "Stay indoors for at least 30 minutes after the last clap of thunder.",
+        "Watch for downed power lines and report them immediately.",
+        "Check for property damage.",
+      ],
+    },
+    {
+      id: "typhoon",
+      title: "Typhoon / Hurricane",
+      icon: Wind,
+      color: "blue",
+      before: [
+        "Know your home's vulnerability to wind and flooding.",
+        "Install storm shutters or pre-cut plywood for windows.",
+        "Secure or bring indoors all outdoor furniture, decorations, trash cans, etc.",
+        "Trim trees and shrubs to make them more wind-resistant.",
+        "Fill your vehicle's gas tank and withdraw some cash.",
+      ],
+      during: [
+        "Stay indoors, away from windows and skylights.",
+        "Take refuge in a small interior room, closet, or hallway on the lowest level that is not prone to flooding.",
+        "Lie on the floor under a sturdy table or other object.",
+        "Do not go outside during the 'eye' of the storm; the worst winds will resume shortly from the opposite direction.",
+      ],
+      after: [
+        "Listen to official reports to ensure the storm has passed.",
+        "Watch for fallen objects, downed power lines, and damaged structures.",
+        "Do not walk or drive through floodwaters.",
+        "Use flashlights, not candles, due to the risk of gas leaks.",
+        "Check on your neighbors, especially the elderly or those with disabilities.",
+      ],
+    },
+    {
+      id: "flood",
+      title: "Flood",
+      icon: Waves,
+      color: "cyan",
+      before: [
+        "Know if you are in a floodplain.",
+        "Consider purchasing flood insurance.",
+        "Elevate critical utilities (furnace, water heater, electrical panel).",
+        "Have a plan to move to higher floors if needed.",
+      ],
+      during: [
+        "Turn Around, Don't Drown! Do not walk, swim, or drive through floodwaters. Six inches of moving water can knock you down; one foot can sweep a vehicle away.",
+        "Evacuate if told to do so.",
+        "If trapped in a building, go to its highest level. Do not enter a closed attic.",
+        "If trapped in a vehicle, stay inside. If water is rising inside the vehicle, seek refuge on the roof.",
+      ],
+      after: [
+        "Return home only when authorities say it is safe.",
+        "Avoid standing water, which may be electrically charged or contaminated.",
+        "Wear heavy gloves and boots during cleanup.",
+        "Photograph damage for insurance claims.",
+        "Be aware that floodwater can weaken roads and structures.",
+      ],
+    },
+    {
+      id: "earthquake",
+      title: "Earthquake",
+      icon: Mountain,
+      color: "stone",
+      before: [
+        "'Drop, Cover, and Hold On' is the single most important preparedness action.",
+        "Secure heavy furniture, appliances, and water heaters to walls.",
+        "Know how to turn off your gas (if you smell a leak) and water.",
+        "Store heavy and breakable objects on low shelves.",
+      ],
+      during: [
+        "DROP onto your hands and knees.",
+        "COVER your head and neck under a sturdy table or desk. If no shelter is nearby, get down near an interior wall and cover your head and neck with your arms.",
+        "HOLD ON to your shelter until the shaking stops.",
+        "If in bed, stay there and cover your head with a pillow.",
+        "Do not run outside. The danger is from falling debris and glass.",
+      ],
+      after: [
+        "Expect aftershocks. Drop, Cover, and Hold On when they occur.",
+        "Check yourself and others for injuries.",
+        "If you are in a damaged building, get out and move to an open space.",
+        "If you smell gas, evacuate immediately and report it.",
+        "Avoid using phones except for life-threatening emergencies.",
+      ],
+    },
+    {
+      id: "fire",
+      title: "Fire (Wildfire / Structure)",
+      icon: Flame,
+      color: "red",
+      before: [
+        "Create a 'defensible space' by clearing flammable vegetation around your home.",
+        "Have an evacuation plan for your family and pets.",
+        "Keep gutters clean and remove debris from your roof.",
+        "Install and test smoke alarms.",
+        "Have fire extinguishers and know how to use them.",
+        "Plan and practice a family escape route with two ways out of every room.",
+      ],
+      during: [
+        "Evacuate immediately if told to do so.",
+        "If trapped, call 911. Stay in a building or vehicle with windows closed. It is safer than being outside.",
+        "If outside, seek shelter in a low-lying area or body of water. Cover yourself with wet clothing or a blanket.",
+        "GET OUT, STAY OUT. Do not stop for belongings.",
+        "Feel closed doors with the back of your hand before opening. If it's warm, use your second way out.",
+        "Stay low to the floor where the air is less toxic.",
+        "Call the fire department from outside.",
+      ],
+      after: [
+        "Do not re-enter until firefighters say it is safe.",
+        "Be aware of hot embers, smoldering debris, and structural damage.",
+        "Wear a mask to avoid breathing ash.",
+        "Watch for flare-ups.",
+      ],
+    },
+    {
+      id: "heat",
+      title: "Extreme Heat",
+      icon: Sun,
+      color: "orange",
+      before: [
+        "Ensure you have a way to stay cool (air conditioning, public cooling centers).",
+        "Cover windows with drapes or shades to block direct sun.",
+        "Have a plan for those at high risk (infants, elderly, people with chronic illnesses).",
+      ],
+      during: [
+        "Stay indoors in air conditioning as much as possible.",
+        "Drink plenty of water, even if you don't feel thirsty. Avoid alcohol and caffeine.",
+        "Wear lightweight, light-colored, loose-fitting clothing.",
+        "Take cool showers or baths.",
+        "Never leave children or pets in a closed vehicle.",
+        "Limit strenuous outdoor activity to the coolest parts of the day (early morning/evening).",
+      ],
+      after: [
+        "Continue to hydrate.",
+        "Check on neighbors, family, and friends who may be vulnerable.",
+        "Be aware of signs of heat illness (dizziness, nausea, headache, confusion) and seek medical help if necessary.",
+      ],
+    },
+  ];
+
+  const getColorClasses = (color) => {
+    const colors = {
+      blue: {
+        bg: "bg-blue-100",
+        text: "text-blue-600",
+        border:
+          "data-[state=open]:border-blue-500 data-[state=open]:ring-blue-500/20",
+      },
+      amber: {
+        bg: "bg-amber-100",
+        text: "text-amber-600",
+        border:
+          "data-[state=open]:border-amber-500 data-[state=open]:ring-amber-500/20",
+      },
+      gray: {
+        bg: "bg-gray-100",
+        text: "text-gray-600",
+        border:
+          "data-[state=open]:border-gray-500 data-[state=open]:ring-gray-500/20",
+      },
+      cyan: {
+        bg: "bg-cyan-100",
+        text: "text-cyan-600",
+        border:
+          "data-[state=open]:border-cyan-500 data-[state=open]:ring-cyan-500/20",
+      },
+      stone: {
+        bg: "bg-stone-100",
+        text: "text-stone-600",
+        border:
+          "data-[state=open]:border-stone-500 data-[state=open]:ring-stone-500/20",
+      },
+      red: {
+        bg: "bg-red-100",
+        text: "text-red-600",
+        border:
+          "data-[state=open]:border-red-500 data-[state=open]:ring-red-500/20",
+      },
+      orange: {
+        bg: "bg-orange-100",
+        text: "text-orange-600",
+        border:
+          "data-[state=open]:border-orange-500 data-[state=open]:ring-orange-500/20",
+      },
+    };
+    return colors[color] || colors.blue;
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto shadow-2xl relative">
       <header className="bg-brand-blue text-white p-4 sticky top-0 z-20 shadow-md flex items-center gap-3">
-        <button onClick={() => setLocation("/")} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+        <button
+          onClick={() => setLocation("/")}
+          className="p-2 hover:bg-white/10 rounded-full transition-colors"
+        >
           <ArrowLeft size={24} />
         </button>
-        <h1 className="font-display font-bold text-xl tracking-wide uppercase">Disaster Plan</h1>
+        <h1 className="font-display font-bold text-xl tracking-wide uppercase">
+          Disaster Plan
+        </h1>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
         <div className="bg-yellow-50 border border-brand-yellow/50 rounded-xl p-4 text-yellow-800 text-sm mb-4">
-          <strong>Be Prepared!</strong> Knowing what to do before, during, and after a disaster can save lives.
+          <strong>Be Prepared!</strong> Knowing what to do before, during, and
+          after a disaster can save lives.
         </div>
 
         <Accordion type="single" collapsible className="w-full space-y-3">
-          
-          <AccordionItem value="typhoon" className="bg-white border border-slate-200 rounded-xl px-4 shadow-sm data-[state=open]:border-brand-blue data-[state=open]:ring-1 data-[state=open]:ring-brand-blue/20">
-            <AccordionTrigger className="hover:no-underline py-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><Wind size={20} /></div>
-                <span className="font-bold text-brand-blue text-lg">Typhoon</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-slate-600 space-y-3 pb-4">
-              <div className="space-y-1">
-                <h4 className="font-bold text-brand-blue">Before</h4>
-                <p>Monitor weather updates. Inspect your house and repair weak parts. Prepare your Go Bag.</p>
-              </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-brand-blue">During</h4>
-                <p>Stay indoors. Keep calm. Turn off main power switch if water enters the house.</p>
-              </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-brand-blue">After</h4>
-                <p>Check for damages. Watch out for live wires. Do not wade in floodwaters.</p>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+          {disasters.map((disaster) => {
+            const colorClasses = getColorClasses(disaster.color);
+            const IconComponent = disaster.icon;
 
-          <AccordionItem value="flood" className="bg-white border border-slate-200 rounded-xl px-4 shadow-sm data-[state=open]:border-brand-blue data-[state=open]:ring-1 data-[state=open]:ring-brand-blue/20">
-            <AccordionTrigger className="hover:no-underline py-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-cyan-100 p-2 rounded-lg text-cyan-600"><Waves size={20} /></div>
-                <span className="font-bold text-brand-blue text-lg">Flood</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-slate-600 space-y-3 pb-4">
-              <p>Move to higher ground immediately. Avoid walking or driving through floodwaters. 6 inches of moving water can knock you down.</p>
-            </AccordionContent>
-          </AccordionItem>
+            return (
+              <AccordionItem
+                key={disaster.id}
+                value={disaster.id}
+                className={`bg-white border border-slate-200 rounded-xl px-4 shadow-sm ${colorClasses.border}`}
+              >
+                <AccordionTrigger className="hover:no-underline py-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`${colorClasses.bg} p-2 rounded-lg ${colorClasses.text}`}
+                    >
+                      <IconComponent size={20} />
+                    </div>
+                    <span className="font-bold text-brand-blue text-lg">
+                      {disaster.title}
+                    </span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="text-slate-600 space-y-4 pb-4">
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Calendar
+                        className="text-green-600 mt-0.5 flex-shrink-0"
+                        size={16}
+                      />
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-green-700">Before</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                          {disaster.before.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
 
-          <AccordionItem value="fire" className="bg-white border border-slate-200 rounded-xl px-4 shadow-sm data-[state=open]:border-brand-blue data-[state=open]:ring-1 data-[state=open]:ring-brand-blue/20">
-            <AccordionTrigger className="hover:no-underline py-4">
-              <div className="flex items-center gap-3">
-                <div className="bg-red-100 p-2 rounded-lg text-red-600"><Flame size={20} /></div>
-                <span className="font-bold text-brand-blue text-lg">Fire</span>
-              </div>
-            </AccordionTrigger>
-            <AccordionContent className="text-slate-600 space-y-3 pb-4">
-              <p>Stop, Drop, and Roll if clothes catch fire. Crawl low under smoke. Call the BFP hotline immediately.</p>
-            </AccordionContent>
-          </AccordionItem>
+                    <div className="flex items-start gap-2">
+                      <Clock
+                        className="text-amber-600 mt-0.5 flex-shrink-0"
+                        size={16}
+                      />
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-amber-700">During</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                          {disaster.during.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
 
+                    <div className="flex items-start gap-2">
+                      <Sun
+                        className="text-blue-600 mt-0.5 flex-shrink-0"
+                        size={16}
+                      />
+                      <div className="space-y-1">
+                        <h4 className="font-bold text-blue-700">After</h4>
+                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                          {disaster.after.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            );
+          })}
         </Accordion>
       </main>
     </div>

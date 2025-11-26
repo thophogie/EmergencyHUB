@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { ArrowLeft, CheckCircle2, Circle, Plus, Phone, Share2, Droplets, Heart, Shirt, Wrench, FileText, Users, AlertTriangle } from "lucide-react";
 
 // Mock data for go bag items
@@ -59,12 +60,13 @@ const categoryColors = {
 };
 
 export default function GoBag() {
+  const [, setLocation] = useLocation();
   const [items, setItems] = useState(initialItems);
   const [customItem, setCustomItem] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Water & Food");
   const [showAlert, setShowAlert] = useState(true);
 
-  const toggleItem = (id) => {
+  const toggleItem = (id: number) => {
     setItems(items.map(item => 
       item.id === id ? { ...item, checked: !item.checked } : item
     ));
@@ -84,10 +86,7 @@ export default function GoBag() {
   };
 
   const handleBack = () => {
-    // Replace this with your actual navigation logic
-    console.log("Navigate back");
-    // If using React Router, you would use:
-    // navigate(-1); or navigate("/");
+    setLocation("/");
   };
 
   const handleCallMDRRMO = () => {
@@ -117,7 +116,7 @@ export default function GoBag() {
     ? Math.round((items.filter(i => i.checked).length / items.length) * 100) 
     : 0;
 
-  const categories = [...new Set(items.map(item => item.category))];
+  const categories = Array.from(new Set(items.map(item => item.category)));
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto shadow-2xl relative">
@@ -205,8 +204,8 @@ export default function GoBag() {
         {/* Category Lists */}
         {categories.map((category) => {
           const categoryItems = items.filter(i => i.category === category);
-          const IconComponent = categoryIcons[category];
-          const colorClass = categoryColors[category];
+          const IconComponent = categoryIcons[category as keyof typeof categoryIcons];
+          const colorClass = categoryColors[category as keyof typeof categoryColors];
 
           return (
             <div key={category}>

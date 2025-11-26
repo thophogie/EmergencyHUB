@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 type AlertLevel = 'normal' | 'yellow' | 'orange' | 'red' | 'violet';
 type WeatherData = {
@@ -58,6 +59,7 @@ const WeatherOutlook = () => {
   const [satelliteImage, setSatelliteImage] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showAlert, setShowAlert] = useState(true);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -100,6 +102,16 @@ const WeatherOutlook = () => {
     const interval = setInterval(fetchSatellite, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (showAlert) {
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 30000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showAlert]);
 
   const getCurrentLocation = async () => {
     if ('geolocation' in navigator) {
@@ -250,15 +262,25 @@ const WeatherOutlook = () => {
         </div>
 
         <div className="p-4 space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 150px)' }}>
-          {config && (
+          {config && showAlert && (
             <div 
-              className="p-3 rounded-lg" 
+              className="p-3 rounded-lg flex items-center justify-between animate-pulse" 
               style={{ backgroundColor: config.color + '20' }}
               data-testid="banner-alert"
             >
-              <p className="text-center font-semibold" style={{ color: config.color }}>
-                {config.icon} {config.label}
-              </p>
+              <div className="flex-1">
+                <p className="text-center font-semibold" style={{ color: config.color }}>
+                  {config.icon} {config.label}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAlert(false)}
+                className="ml-2 p-1 hover:opacity-70 transition-opacity"
+                style={{ color: config.color }}
+                data-testid="button-close-alert"
+              >
+                <X size={20} />
+              </button>
             </div>
           )}
 
@@ -352,8 +374,14 @@ const WeatherOutlook = () => {
                       Distance: {weatherData.cyclone.distance} km from coast
                     </p>
                   </div>
-                  <div className="h-[200px] bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                    <p className="text-gray-500 dark:text-gray-400">Map view</p>
+                  <div className="w-full h-[480px] rounded-lg overflow-hidden">
+                    <iframe 
+                      src="https://www.google.com/maps/d/embed?mid=1TSspiHSYVJinJHVDOsGicr74ERNCei0&ehbc=2E312F" 
+                      width="100%" 
+                      height="480"
+                      className="border-0"
+                      data-testid="iframe-map"
+                    />
                   </div>
                 </Card>
               )}
