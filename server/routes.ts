@@ -1,7 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertIncidentSchema, insertGoBagItemSchema } from "@shared/schema";
+import { 
+  insertIncidentSchema, 
+  insertGoBagItemSchema,
+  insertHouseholdSchema,
+  insertMemberSchema,
+  insertCheckInSchema
+} from "@shared/schema";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -9,6 +15,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize default data
   await storage.initializeGoBagItems();
   await storage.initializeEvacuationCenters();
+  await storage.initializeHouseholds();
+  await storage.initializeMembers();
+  await storage.initializeHazardZones();
+  await storage.initializePois();
 
   // Incident Routes
   app.post("/api/incidents", async (req, res) => {
@@ -79,6 +89,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ error: "Failed to update evacuation center" });
     }
+  });
+
+  // Household Routes
+  app.get("/api/households", async (req, res) => {
+    try {
+      const households = await storage.getHouseholds();
+      res.json(households);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch households" });
+    }
+  });
+
+  app.post("/api/households", async (req, res) => {
+    try {
+      const household = insertHouseholdSchema.parse(req.body);
+      const newHousehold = await storage.createHousehold(household);
+      res.json(newHousehold);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create household" });
+    }
+  });
+
+  // Member Routes
+  app.get("/api/households/:householdId/members", async (req, res) => {
+    try {
+      const householdId = parseInt(req.params.householdId);
+      const members = await storage.getMembers(householdId);
+      res.json(members);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch members" });
+    }
+  });
+
+  app.post("/api/members", async (req, res) => {
+    try {
+      const member = insertMemberSchema.parse(req.body);
+      const newMember = await storage.createMember(member);
+      res.json(newMember);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create member" });
+    }
+  });
+
+  app.patch("/api/members/:id/status", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status, location } = req.body;
+      if (!status) {
+        return res.status(400).json({ error: "status is required" });
+      }
+      const member = await storage.updateMemberStatus(id, status, location);
+      res.json(member);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update member status" });
+    }
+  });
+
+  // Check-in Routes
+  app.get("/api/members/:memberId/check-ins", async (req, res) => {
+    try {
+      const memberId = parseInt(req.params.memberId);
+      const checkIns = await storage.getCheckIns(memberId);
+      res.json(checkIns);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch check-ins" });
+    }
+  });
+
+  app.post("/api/check-ins", async (req, res) => {
+    try {
+      const checkIn = insertCheckInSchema.parse(req.body);
+      const newCheckIn = await storage.createCheckIn(checkIn);
+      res.json(newCheckIn);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create check-in" });
+    }
+  });
+
+  // Hazard Zone Routes
+  app.get("/api/hazard-zones", async (req, res) => {
+    try {
+      const zones = await storage.getHazardZones();
+      res.json(zones);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch hazard zones" });
+    }
+  });
+
+  // POI Routes
+  app.get("/api/pois", async (req, res) => {
+    try {
+      const type = req.query.type as string | undefined;
+      const pois = await storage.getPois(type);
+      res.json(pois);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch POIs" });
+    }
+  });
+
+  // Config Route for Google API Key
+  app.get("/api/config/google-api-key", async (req, res) => {
+    res.json({ apiKey: process.env.GOOGLE_API || '' });
   });
 
   const httpServer = createServer(app);
