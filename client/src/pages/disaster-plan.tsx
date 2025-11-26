@@ -16,6 +16,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { motion } from "framer-motion";
 
 export default function DisasterPlan() {
   const [, setLocation] = useLocation();
@@ -26,6 +27,7 @@ export default function DisasterPlan() {
       title: "Storm Surge & Tsunami",
       icon: Waves,
       color: "blue",
+      gradient: "from-blue-500 to-cyan-500",
       before: [
         "Know your zone: Is your home, work, or school in a designated evacuation zone?",
         "Plan multiple evacuation routes inland and to higher ground.",
@@ -51,6 +53,7 @@ export default function DisasterPlan() {
       title: "Landslide",
       icon: Mountain,
       color: "amber",
+      gradient: "from-amber-500 to-orange-500",
       before: [
         "Learn if your area is prone to landslides.",
         "Watch for signs like new cracks in foundations, soil moving away from foundations, tilting trees or fences.",
@@ -74,6 +77,7 @@ export default function DisasterPlan() {
       title: "Thunderstorm",
       icon: CloudLightning,
       color: "gray",
+      gradient: "from-gray-500 to-slate-600",
       before: [
         "Secure or bring inside outdoor objects that could be blown away.",
         "Unplug sensitive electronic appliances to protect from power surges.",
@@ -97,6 +101,7 @@ export default function DisasterPlan() {
       title: "Typhoon / Hurricane",
       icon: Wind,
       color: "blue",
+      gradient: "from-blue-600 to-indigo-700",
       before: [
         "Know your home's vulnerability to wind and flooding.",
         "Install storm shutters or pre-cut plywood for windows.",
@@ -123,6 +128,7 @@ export default function DisasterPlan() {
       title: "Flood",
       icon: Waves,
       color: "cyan",
+      gradient: "from-cyan-500 to-teal-500",
       before: [
         "Know if you are in a floodplain.",
         "Consider purchasing flood insurance.",
@@ -148,6 +154,7 @@ export default function DisasterPlan() {
       title: "Earthquake",
       icon: Mountain,
       color: "stone",
+      gradient: "from-stone-500 to-gray-600",
       before: [
         "'Drop, Cover, and Hold On' is the single most important preparedness action.",
         "Secure heavy furniture, appliances, and water heaters to walls.",
@@ -174,6 +181,7 @@ export default function DisasterPlan() {
       title: "Fire (Wildfire / Structure)",
       icon: Flame,
       color: "red",
+      gradient: "from-red-500 to-orange-500",
       before: [
         "Create a 'defensible space' by clearing flammable vegetation around your home.",
         "Have an evacuation plan for your family and pets.",
@@ -203,6 +211,7 @@ export default function DisasterPlan() {
       title: "Extreme Heat",
       icon: Sun,
       color: "orange",
+      gradient: "from-orange-400 to-amber-500",
       before: [
         "Ensure you have a way to stay cool (air conditioning, public cooling centers).",
         "Cover windows with drapes or shades to block direct sun.",
@@ -273,97 +282,181 @@ export default function DisasterPlan() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col max-w-md mx-auto shadow-2xl relative">
-      <header className="bg-brand-blue text-white p-4 sticky top-0 z-20 shadow-md flex items-center gap-3">
-        <button
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col max-w-md mx-auto shadow-2xl relative">
+      <motion.header
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 sticky top-0 z-20 shadow-lg flex items-center gap-3"
+      >
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setLocation("/")}
           className="p-2 hover:bg-white/10 rounded-full transition-colors"
         >
           <ArrowLeft size={24} />
-        </button>
-        <h1 className="font-display font-bold text-xl tracking-wide uppercase">
+        </motion.button>
+        <motion.h1
+          initial={{ x: -20, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.5 }}
+          className="font-display font-bold text-xl tracking-wide uppercase"
+        >
           Disaster Plan
-        </h1>
-      </header>
+        </motion.h1>
+      </motion.header>
 
       <main className="flex-1 overflow-y-auto p-4 pb-24 space-y-4">
-        <div className="bg-yellow-50 border border-brand-yellow/50 rounded-xl p-4 text-yellow-800 text-sm mb-4">
-          <strong>Be Prepared!</strong> Knowing what to do before, during, and
-          after a disaster can save lives.
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl p-4 text-amber-800 text-sm mb-4 shadow-md"
+        >
+          <strong className="font-bold">Be Prepared!</strong> Knowing what to do
+          before, during, and after a disaster can save lives.
+        </motion.div>
 
-        <Accordion type="single" collapsible className="w-full space-y-3">
-          {disasters.map((disaster) => {
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          {disasters.map((disaster, index) => {
             const colorClasses = getColorClasses(disaster.color);
             const IconComponent = disaster.icon;
 
             return (
-              <AccordionItem
+              <motion.div
                 key={disaster.id}
-                value={disaster.id}
-                className={`bg-white border border-slate-200 rounded-xl px-4 shadow-sm ${colorClasses.border}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * index + 0.4, duration: 0.5 }}
               >
-                <AccordionTrigger className="hover:no-underline py-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`${colorClasses.bg} p-2 rounded-lg ${colorClasses.text}`}
-                    >
-                      <IconComponent size={20} />
-                    </div>
-                    <span className="font-bold text-brand-blue text-lg">
-                      {disaster.title}
-                    </span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 space-y-4 pb-4">
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-2">
-                      <Calendar
-                        className="text-green-600 mt-0.5 flex-shrink-0"
-                        size={16}
-                      />
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-green-700">Before</h4>
-                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
-                          {disaster.before.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
+                <AccordionItem
+                  value={disaster.id}
+                  className={`bg-white border border-slate-200 rounded-2xl px-4 shadow-md hover:shadow-lg transition-shadow ${colorClasses.border}`}
+                >
+                  <AccordionTrigger className="hover:no-underline py-4 group">
+                    <div className="flex items-center gap-3 w-full">
+                      <div
+                        className={`bg-gradient-to-r ${disaster.gradient} p-3 rounded-xl text-white shadow-md`}
+                      >
+                        <IconComponent size={24} />
+                      </div>
+                      <span className="font-bold text-slate-800 text-lg group-hover:text-slate-900 transition-colors">
+                        {disaster.title}
+                      </span>
+                      <div className="ml-auto">
+                        <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                          <svg
+                            className="text-slate-500 group-data-[state=open]:rotate-180 transition-transform duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            height="20"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
                       </div>
                     </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600 space-y-4 pb-4">
+                    <div className="space-y-4">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="flex items-start gap-3 p-3 bg-green-50 rounded-xl border border-green-100"
+                      >
+                        <div className="mt-1 p-2 bg-green-100 rounded-lg">
+                          <Calendar className="text-green-600" size={20} />
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-green-700 flex items-center gap-2">
+                            Before
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                            {disaster.before.map((item, index) => (
+                              <motion.li
+                                key={index}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.1 * index + 0.3 }}
+                                className="pl-1"
+                              >
+                                {item}
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
 
-                    <div className="flex items-start gap-2">
-                      <Clock
-                        className="text-amber-600 mt-0.5 flex-shrink-0"
-                        size={16}
-                      />
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-amber-700">During</h4>
-                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
-                          {disaster.during.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="flex items-start gap-3 p-3 bg-amber-50 rounded-xl border border-amber-100"
+                      >
+                        <div className="mt-1 p-2 bg-amber-100 rounded-lg">
+                          <Clock className="text-amber-600" size={20} />
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-amber-700 flex items-center gap-2">
+                            During
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                            {disaster.during.map((item, index) => (
+                              <motion.li
+                                key={index}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.1 * index + 0.4 }}
+                                className="pl-1"
+                              >
+                                {item}
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
 
-                    <div className="flex items-start gap-2">
-                      <Sun
-                        className="text-blue-600 mt-0.5 flex-shrink-0"
-                        size={16}
-                      />
-                      <div className="space-y-1">
-                        <h4 className="font-bold text-blue-700">After</h4>
-                        <ul className="list-disc list-inside space-y-1 text-sm pl-2">
-                          {disaster.after.map((item, index) => (
-                            <li key={index}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.4 }}
+                        className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100"
+                      >
+                        <div className="mt-1 p-2 bg-blue-100 rounded-lg">
+                          <Sun className="text-blue-600" size={20} />
+                        </div>
+                        <div className="space-y-2">
+                          <h4 className="font-bold text-blue-700 flex items-center gap-2">
+                            After
+                          </h4>
+                          <ul className="list-disc list-inside space-y-1 text-sm pl-2">
+                            {disaster.after.map((item, index) => (
+                              <motion.li
+                                key={index}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.1 * index + 0.5 }}
+                                className="pl-1"
+                              >
+                                {item}
+                              </motion.li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
             );
           })}
         </Accordion>
