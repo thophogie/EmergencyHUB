@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { 
   ArrowLeft, 
@@ -20,7 +20,7 @@ import {
   Phone,
   Mail,
   Building,
-  Route,
+  Road,
   CloudRain,
   Wind,
   Zap,
@@ -30,9 +30,8 @@ import {
   Bus,
   Bike,
   Truck,
-  Cross,
-  Shield,
-  Siren,
+  Ambulance,
+  PoliceCar,
   Ship,
   Fuel,
   Factory,
@@ -46,9 +45,7 @@ import {
   Moon,
   Cloud,
   Eye,
-  EyeOff,
-  Locate,
-  RefreshCw
+  EyeOff
 } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -81,9 +78,9 @@ const VEHICLE_TYPES = [
   { id: "motorcycle", label: "Motorcycle", icon: Bike },
   { id: "truck", label: "Truck", icon: Truck },
   { id: "bus", label: "Bus", icon: Bus },
-  { id: "ambulance", label: "Ambulance", icon: Cross },
-  { id: "police", label: "Police Vehicle", icon: Shield },
-  { id: "fire-truck", label: "Fire Truck", icon: Siren },
+  { id: "ambulance", label: "Ambulance", icon: Ambulance },
+  { id: "police", label: "Police Vehicle", icon: PoliceCar },
+  { id: "fire-truck", label: "Fire Truck", icon: Flame },
   { id: "train", label: "Train", icon: Train },
   { id: "plane", label: "Airplane", icon: Plane },
   { id: "ship", label: "Ship", icon: Ship },
@@ -93,7 +90,7 @@ const LOCATION_TYPES = [
   { id: "residential", label: "Residential Area", icon: Home },
   { id: "commercial", label: "Commercial Area", icon: Store },
   { id: "industrial", label: "Industrial Zone", icon: Factory },
-  { id: "road", label: "Road/Way", icon: Route },
+  { id: "road", label: "Road/Way", icon: Road },
   { id: "school", label: "School/Campus", icon: School },
   { id: "hospital", label: "Hospital/Medical Facility", icon: Hospital },
   { id: "public", label: "Public Space", icon: Users },
@@ -146,13 +143,6 @@ export default function ReportIncident() {
     specialNotes: ""
   });
   const [showSensitiveFields, setShowSensitiveFields] = useState(false);
-  const [locationData, setLocationData] = useState({
-    latitude: null,
-    longitude: null,
-    address: "Getting current location...",
-    error: null
-  });
-  const [isLocating, setIsLocating] = useState(false);
 
   const submitIncident = useMutation({
     mutationFn: async (data) => {
@@ -176,99 +166,6 @@ export default function ReportIncident() {
     },
   });
 
-  // Get current location on component mount
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
-
-  const getCurrentLocation = () => {
-    setIsLocating(true);
-    setLocationData(prev => ({ ...prev, address: "Getting current location...", error: null }));
-
-    if (!navigator.geolocation) {
-      setLocationData(prev => ({ 
-        ...prev, 
-        error: "Geolocation is not supported by your browser",
-        address: "Location not available"
-      }));
-      setIsLocating(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setLocationData({
-          latitude,
-          longitude,
-          address: `Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`,
-          error: null
-        });
-
-        // Reverse geocode to get address (in real app, you'd use a service like Google Maps API)
-        reverseGeocode(latitude, longitude);
-        setIsLocating(false);
-      },
-      (error) => {
-        let errorMessage = "Unable to retrieve your location";
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = "Location access denied. Please enable location services.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = "Location information is unavailable.";
-            break;
-          case error.TIMEOUT:
-            errorMessage = "The request to get user location timed out.";
-            break;
-          default:
-            errorMessage = "An unknown error occurred.";
-            break;
-        }
-        setLocationData(prev => ({ 
-          ...prev, 
-          error: errorMessage,
-          address: "Location not available"
-        }));
-        setIsLocating(false);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000 // 5 minutes
-      }
-    );
-  };
-
-  const reverseGeocode = (latitude, longitude) => {
-    // In a real application, you would use a reverse geocoding service
-    // For demo purposes, we'll just show coordinates
-    // Example of what you might do with a real API:
-    /*
-    fetch(`https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=YOUR_API_KEY`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.results && data.results.length > 0) {
-          const address = data.results[0].formatted;
-          setLocationData(prev => ({ ...prev, address }));
-        }
-      })
-      .catch(() => {
-        // Fallback to coordinates if geocoding fails
-        setLocationData(prev => ({ 
-          ...prev, 
-          address: `Lat: ${latitude.toFixed(6)}, Lng: ${longitude.toFixed(6)}`
-        }));
-      });
-    */
-
-    // For demo, we'll just update with a more readable format
-    setLocationData(prev => ({ 
-      ...prev, 
-      address: `Nearby: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedType || !description) {
@@ -284,7 +181,7 @@ export default function ReportIncident() {
       type: selectedType,
       severity,
       description,
-      location: locationData,
+      location: "Current Location",
       isAnonymous,
       numberOfPeople,
       contactInfo,
@@ -345,7 +242,7 @@ export default function ReportIncident() {
         <h1 className="font-display font-bold text-xl tracking-wide uppercase">Report an Incident</h1>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-4 pb-24 space-y-6">
+      <main className="flex-1 overflow-y-auto p-4 pb-32 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Incident Type Selection */}
           <section className="space-y-3">
@@ -440,45 +337,14 @@ export default function ReportIncident() {
                   </motion.div>
                 </div>
               </div>
-              <div className="p-3 bg-blue-900">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 text-yellow-500">
-                    <MapPin size={16} />
-                    <span className="text-sm font-bold">Current Location</span>
-                  </div>
-                  <motion.button 
-                    type="button" 
-                    onClick={getCurrentLocation}
-                    className="text-xs font-bold text-yellow-500 underline flex items-center gap-1"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={isLocating}
-                  >
-                    {isLocating ? (
-                      <>
-                        <RefreshCw size={12} className="animate-spin" />
-                        Locating...
-                      </>
-                    ) : (
-                      <>
-                        <Locate size={12} />
-                        Refresh
-                      </>
-                    )}
-                  </motion.button>
+              <div className="p-3 flex items-center justify-between bg-blue-900">
+                <div className="flex items-center gap-2 text-yellow-500">
+                  <MapPin size={16} />
+                  <span className="text-sm font-bold">Current Location</span>
                 </div>
-                <div className="text-white text-sm p-2 bg-blue-800/50 rounded-lg border border-white/10">
-                  {locationData.error ? (
-                    <span className="text-red-300">{locationData.error}</span>
-                  ) : (
-                    <span>{locationData.address}</span>
-                  )}
-                </div>
-                {locationData.latitude && locationData.longitude && (
-                  <div className="mt-2 text-xs text-white/70">
-                    Coordinates: {locationData.latitude.toFixed(6)}, {locationData.longitude.toFixed(6)}
-                  </div>
-                )}
+                <button type="button" className="text-xs font-bold text-yellow-500 underline">
+                  Change
+                </button>
               </div>
             </div>
           </section>
