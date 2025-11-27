@@ -794,12 +794,10 @@ export default function ReportIncident() {
         >
           Cancel
         </Button>
-        <motion.button 
+        <Button 
           className="flex-[2] bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-bold h-12 rounded-xl shadow-md shadow-yellow-500/20 transition-all"
           onClick={handleSubmit}
           disabled={!selectedType || submitIncident.isPending}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
         >
           {submitIncident.isPending ? (
             <span className="flex items-center gap-2">
@@ -809,7 +807,7 @@ export default function ReportIncident() {
           ) : (
             "Submit Report"
           )}
-        </motion.button>
+        </Button>
       </footer>
     </div>
   );
