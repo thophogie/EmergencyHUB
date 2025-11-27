@@ -28,28 +28,20 @@ function DashboardButton({
     <motion.button
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.4 }}
-      whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)" }}
-      whileTap={{ scale: 0.95 }}
+      transition={{ delay: index * 0.05, duration: 0.3 }}
+      whileTap={{ scale: 0.97 }}
       onClick={onClick}
-      className="flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50 rounded-2xl p-5 shadow-[0_8px_0_0_rgba(59,130,246,0.5)] active:shadow-none active:translate-y-[8px] transition-all border-2 border-yellow-500 h-36 w-full group cursor-pointer relative overflow-hidden"
+      className="flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50 rounded-2xl p-4 shadow-[0_6px_0_0_rgba(59,130,246,0.5)] active:shadow-none active:translate-y-[6px] transition-all border-2 border-yellow-500 min-h-[140px] w-full cursor-pointer relative overflow-hidden touch-manipulation"
+      style={{ touchAction: 'manipulation' }}
     >
-      {/* Animated background element */}
-      <div className="absolute -top-8 -right-8 w-24 h-24 bg-yellow-400 rounded-full opacity-10 blur-xl"></div>
-
-      <motion.div
-        whileHover={{ scale: 1.15, rotate: 5 }}
-        transition={{ type: "spring", stiffness: 300 }}
-        className="text-blue-950 mb-3"
-      >
+      <div className="text-blue-950 mb-2">
         {icon}
-      </motion.div>
-      <span className="text-blue-950 font-bold text-base text-center leading-tight font-sans z-10">
+      </div>
+      <span className="text-blue-950 font-bold text-sm text-center leading-tight font-sans z-10">
         {label}
       </span>
 
-      {/* Decorative corner element */}
-      <div className="absolute bottom-2 right-2 w-6 h-6 border-r-2 border-b-2 border-yellow-400 rounded-br-lg"></div>
+      <div className="absolute bottom-2 right-2 w-5 h-5 border-r-2 border-b-2 border-yellow-400 rounded-br-lg"></div>
     </motion.button>
   );
 }
@@ -114,36 +106,21 @@ export function DashboardGrid() {
       </div>
 
       {/* Header Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="pt-1 px-8 relative z-10"
-      >
+      <div className="pt-1 px-8 relative z-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-yellow-300 mt-1"
-            >
+            <p className="text-yellow-300 mt-1">
               Be Prepared. Stay Safe.
-            </motion.p>
+            </p>
           </div>
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 200 }}
-            className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg"
-          >
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg">
             <ShieldAlert className="text-blue-950" size={24} />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Main Grid */}
-      <div className="px-4 py-4 relative z-10">
+      <div className="px-4 py-4 relative z-10 pb-28">
         <div className="grid grid-cols-2 gap-4">
           {buttons.map((btn, index) => (
             <DashboardButton
@@ -156,19 +133,6 @@ export function DashboardGrid() {
           ))}
         </div>
       </div>
-
-      {/* Floating Elements */}
-      <motion.div
-        animate={{
-          y: [0, -15, 0],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-5 left-2 w-3 h-3 rounded-full bg-yellow-400 opacity-70"
-      ></motion.div>
 
 
     </div>

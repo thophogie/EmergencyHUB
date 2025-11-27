@@ -87,8 +87,9 @@ export function BottomNav() {
         {/* Navigation Bar */}
         <div className="bg-brand-yellow h-16 flex items-end justify-around pb-3 pt-7 px-6 rounded-t-3xl shadow-[0_-4px_10px_rgba(0,0,0,0.2)]">
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
+            className="flex flex-col items-center gap-1 text-brand-blue active:text-white transition-colors p-3 touch-manipulation min-w-[44px] min-h-[44px]"
             data-testid="button-home"
+            style={{ touchAction: 'manipulation' }}
           >
             <div className="bg-white p-2.5 rounded-full shadow-sm">
               <Home size={22} className="text-brand-blue" />
@@ -96,9 +97,10 @@ export function BottomNav() {
           </button>
 
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
+            className="flex flex-col items-center gap-1 text-brand-blue active:text-white transition-colors p-3 touch-manipulation min-w-[44px] min-h-[44px]"
             onClick={() => setSmsDialogOpen(true)}
             data-testid="button-sms"
+            style={{ touchAction: 'manipulation' }}
           >
             <div className="bg-brand-blue p-2.5 rounded-full shadow-sm">
               <Mail size={22} className="text-white" />
@@ -106,8 +108,9 @@ export function BottomNav() {
           </button>
 
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
+            className="flex flex-col items-center gap-1 text-brand-blue active:text-white transition-colors p-3 touch-manipulation min-w-[44px] min-h-[44px]"
             data-testid="button-profile"
+            style={{ touchAction: 'manipulation' }}
           >
             <div className="bg-white p-2.5 rounded-full shadow-sm">
               <User size={22} className="text-brand-blue" />
