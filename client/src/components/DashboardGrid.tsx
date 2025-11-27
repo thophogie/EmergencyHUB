@@ -190,18 +190,6 @@ export function DashboardGrid() {
         className="absolute top-5 left-2 w-3 h-3 rounded-full bg-yellow-400 opacity-70"
       ></motion.div>
 
-      <motion.div
-        animate={{
-          y: [0, 10, 0],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-        className="absolute top-5 right-55 w-3 h-3 rounded-full bg-yellow-400 opacity-50"
-      ></motion.div>
 
     </div>
   );
