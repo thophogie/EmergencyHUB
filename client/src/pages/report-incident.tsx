@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -58,6 +61,16 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Custom icon for Leaflet markers
+const customMarkerIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
 const INCIDENT_TYPES = [
   { id: "fire", label: "Fire", icon: Flame, color: "text-red-500" },
   { id: "flood", label: "Flood", icon: Waves, color: "text-blue-500" },
@@ -65,12 +78,8 @@ const INCIDENT_TYPES = [
   { id: "vehicular-accident", label: "Vehicular Accident", icon: Car, color: "text-gray-600" },
   { id: "medical-emergency", label: "Medical Emergency", icon: Heart, color: "text-red-600" },
   { id: "earthquake", label: "Earthquake", icon: AlertTriangle, color: "text-amber-500" },
-  { id: "storm", label: "Severe Weather", icon: CloudRain, color: "text-blue-400" },
   { id: "explosion", label: "Explosion", icon: Zap, color: "text-yellow-500" },
   { id: "structural-collapse", label: "Building Collapse", icon: Building, color: "text-gray-700" },
-  { id: "hazardous-material", label: "Chemical Spill", icon: Factory, color: "text-purple-500" },
-  { id: "power-outage", label: "Power Outage", icon: Zap, color: "text-yellow-400" },
-  { id: "water-outage", label: "Water Supply Issue", icon: Waves, color: "text-cyan-500" },
 ];
 
 const VEHICLE_TYPES = [
@@ -143,6 +152,22 @@ export default function ReportIncident() {
     specialNotes: ""
   });
   const [showSensitiveFields, setShowSensitiveFields] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [userLocationError, setUserLocationError] = useState(null);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      (error) => {
+        setUserLocationError(error.message);
+      }
+    );
+  }, []);
 
   const submitIncident = useMutation({
     mutationFn: async (data) => {
@@ -181,7 +206,7 @@ export default function ReportIncident() {
       type: selectedType,
       severity,
       description,
-      location: "Current Location",
+      location: userLocation || "Current Location",
       isAnonymous,
       numberOfPeople,
       contactInfo,
@@ -228,6 +253,12 @@ export default function ReportIncident() {
     return weather ? weather.icon : Sun;
   };
 
+  const handleLocationChange = (e) => {
+    // This function would ideally open a map to select a new location.
+    // For now, it just logs a message.
+    console.log("Changing location is not implemented yet.");
+  };
+
   return (
     <div className="min-h-screen bg-blue-950 flex flex-col max-w-md mx-auto shadow-2xl relative">
       <header className="bg-blue-950 text-white p-4 sticky top-0 z-20 shadow-md flex items-center gap-3 border-b-2 border-yellow-500">
@@ -240,6 +271,16 @@ export default function ReportIncident() {
           <ArrowLeft size={24} />
         </motion.button>
         <h1 className="font-display font-bold text-xl tracking-wide uppercase">Report an Incident</h1>
+        {/* Emergency Hotline Button */}
+        <motion.button
+          onClick={() => console.log("Emergency hotline called")}
+          className="ml-auto p-2 bg-red-600 hover:bg-red-500 text-white rounded-full shadow-lg flex items-center gap-1"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <Phone size={20} />
+          <span className="text-sm font-bold">EMERGENCY</span>
+        </motion.button>
       </header>
 
       <main className="flex-1 overflow-y-auto p-4 pb-32 space-y-6">
@@ -325,24 +366,36 @@ export default function ReportIncident() {
           <section className="space-y-3">
             <Label className="text-yellow-500 font-bold text-sm uppercase tracking-wider">Location</Label>
             <div className="bg-blue-900 border border-white/20 rounded-xl overflow-hidden">
-              <div className="h-32 bg-blue-800 relative w-full">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-blue-800 opacity-70"></div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <motion.div 
-                    className="bg-yellow-500 text-blue-950 p-2 rounded-full shadow-lg"
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <MapPin size={24} fill="currentColor" />
-                  </motion.div>
+              {userLocation ? (
+                <MapContainer
+                  center={[userLocation.lat, userLocation.lng]}
+                  zoom={13}
+                  style={{ height: "150px", width: "100%" }}
+                  className="bg-blue-800"
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                  <Marker position={[userLocation.lat, userLocation.lng]} icon={customMarkerIcon}>
+                    <Popup>Your current location.</Popup>
+                  </Marker>
+                </MapContainer>
+              ) : (
+                <div className="h-32 bg-blue-800 relative w-full flex items-center justify-center text-white/70">
+                  {userLocationError ? `Error: ${userLocationError}` : "Loading location..."}
                 </div>
-              </div>
+              )}
               <div className="p-3 flex items-center justify-between bg-blue-900">
                 <div className="flex items-center gap-2 text-yellow-500">
                   <MapPin size={16} />
-                  <span className="text-sm font-bold">Current Location</span>
+                  <span className="text-sm font-bold">
+                    {userLocation 
+                      ? `Lat: ${userLocation.lat.toFixed(4)}, Lng: ${userLocation.lng.toFixed(4)}`
+                      : "Fetching Location..."}
+                  </span>
                 </div>
-                <button type="button" className="text-xs font-bold text-yellow-500 underline">
+                <button type="button" onClick={handleLocationChange} className="text-xs font-bold text-yellow-500 underline">
                   Change
                 </button>
               </div>

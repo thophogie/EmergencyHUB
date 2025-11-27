@@ -1,6 +1,8 @@
-/// <reference types="@types/google.maps" />
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { MapContainer, TileLayer, Marker, Popup, Polygon } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -69,14 +71,8 @@ export default function EvacuationPlan() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [activeTab, setActiveTab] = useState("map");
-
-  // Refs to track map overlays
-  const hazardPolygonsRef = useRef<google.maps.Polygon[]>([]);
-  const poiMarkersRef = useRef<google.maps.Marker[]>([]);
-  const centerMarkersRef = useRef<google.maps.Marker[]>([]);
+  const [mapCenter] = useState<[number, number]>([13.0345, 123.4567]);
 
   // Layer toggles
   const [showHazardZones, setShowHazardZones] = useState(true);
@@ -87,6 +83,16 @@ export default function EvacuationPlan() {
   // Family tracking
   const [selectedMember, setSelectedMember] = useState<number | null>(null);
   const [myStatus, setMyStatus] = useState("unknown");
+
+  // Fix Leaflet default marker icon issue
+  useEffect(() => {
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    });
+  }, []);
 
   // Fetch data
   const { data: centers = [] } = useQuery<EvacuationCenter[]>({
@@ -144,126 +150,7 @@ export default function EvacuationPlan() {
     },
   });
 
-  // Initialize Google Map
-  useEffect(() => {
-    if (!mapRef.current || map) return;
-
-    loadGoogleMapsScript().then(() => {
-      const mapInstance = new google.maps.Map(mapRef.current!, {
-        center: { lat: 13.0345, lng: 123.4567 },
-        zoom: 14,
-        mapTypeId: 'roadmap',
-      });
-      setMap(mapInstance);
-    }).catch(console.error);
-  }, [map]);
-
-  // Render evacuation centers
-  useEffect(() => {
-    if (!map || !centers.length) return;
-
-    // Clear existing markers
-    centerMarkersRef.current.forEach(marker => marker.setMap(null));
-    centerMarkersRef.current = [];
-
-    centers.forEach((center) => {
-      if (center.latitude && center.longitude) {
-        const marker = new google.maps.Marker({
-          position: { lat: parseFloat(center.latitude), lng: parseFloat(center.longitude) },
-          map,
-          title: center.name,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: center.status === "Open" ? "#22c55e" : "#ef4444",
-            fillOpacity: 1,
-            strokeColor: "#fff",
-            strokeWeight: 2,
-          },
-        });
-
-        const infoWindow = new google.maps.InfoWindow({
-          content: `
-            <div style="padding: 8px;">
-              <h3 style="font-weight: bold; margin-bottom: 4px;">${center.name}</h3>
-              <p style="font-size: 12px; color: #666;">${center.distance} • ${center.capacity}</p>
-              <p style="font-size: 12px; font-weight: bold; color: ${center.status === 'Open' ? '#22c55e' : '#ef4444'};">${center.status}</p>
-            </div>
-          `,
-        });
-
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-
-        centerMarkersRef.current.push(marker);
-      }
-    });
-  }, [map, centers]);
-
-  // Render hazard zones
-  useEffect(() => {
-    if (!map || !hazardZones.length) return;
-
-    // Clear existing polygons
-    hazardPolygonsRef.current.forEach(polygon => polygon.setMap(null));
-    hazardPolygonsRef.current = [];
-
-    if (!showHazardZones) return;
-
-    hazardZones.forEach((zone) => {
-      const coordinates = zone.coordinates.map((coord) => {
-        const [lat, lng] = coord.split(',').map(parseFloat);
-        return { lat, lng };
-      });
-
-      const polygon = new google.maps.Polygon({
-        paths: coordinates,
-        strokeColor: zone.type === "flood" ? "#3b82f6" : "#f59e0b",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: zone.type === "flood" ? "#3b82f6" : "#f59e0b",
-        fillOpacity: 0.2,
-        map,
-      });
-
-      hazardPolygonsRef.current.push(polygon);
-    });
-  }, [map, hazardZones, showHazardZones]);
-
-  // Render POIs
-  useEffect(() => {
-    if (!map || !pois.length) return;
-
-    // Clear existing POI markers
-    poiMarkersRef.current.forEach(marker => marker.setMap(null));
-    poiMarkersRef.current = [];
-
-    pois.forEach((poi) => {
-      let shouldShow = false;
-      if (poi.type === "medical" && showMedical) shouldShow = true;
-      if (poi.type === "pet-shelter" && showPetShelter) shouldShow = true;
-      if (poi.type === "charging" && showCharging) shouldShow = true;
-
-      if (shouldShow) {
-        const marker = new google.maps.Marker({
-          position: { lat: parseFloat(poi.latitude), lng: parseFloat(poi.longitude) },
-          map,
-          title: poi.name,
-          icon: {
-            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="${poi.type === 'medical' ? '#ef4444' : poi.type === 'pet-shelter' ? '#8b5cf6' : '#eab308'}">
-                <circle cx="12" cy="12" r="10"/>
-              </svg>
-            `)}`,
-            scaledSize: new google.maps.Size(24, 24),
-          },
-        });
-
-        poiMarkersRef.current.push(marker);
-      }
-    });
-  }, [map, pois, showMedical, showPetShelter, showCharging]);
+  
 
   const handleShareLocation = async () => {
     if (navigator.share) {
@@ -331,7 +218,83 @@ export default function EvacuationPlan() {
         </TabsList>
 
         <TabsContent value="map" className="flex-1 overflow-y-auto p-4 space-y-4">
-          <div ref={mapRef} className="h-96 bg-slate-200 rounded-xl overflow-hidden shadow-lg" data-testid="google-map"></div>
+          <div className="h-96 bg-slate-200 rounded-xl overflow-hidden shadow-lg" data-testid="leaflet-map">
+            <MapContainer
+              center={mapCenter}
+              zoom={14}
+              scrollWheelZoom={false}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              
+              {/* Evacuation Centers */}
+              {centers.map((center) => {
+                if (center.latitude && center.longitude) {
+                  return (
+                    <Marker
+                      key={center.id}
+                      position={[parseFloat(center.latitude), parseFloat(center.longitude)]}
+                    >
+                      <Popup>
+                        <div className="p-2">
+                          <h3 className="font-bold">{center.name}</h3>
+                          <p className="text-sm">{center.distance} • {center.capacity}</p>
+                          <p className={`text-sm font-bold ${center.status === 'Open' ? 'text-green-600' : 'text-red-600'}`}>
+                            {center.status}
+                          </p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                }
+                return null;
+              })}
+
+              {/* Hazard Zones */}
+              {showHazardZones && hazardZones.map((zone) => {
+                const coordinates = zone.coordinates.map((coord) => {
+                  const [lat, lng] = coord.split(',').map(parseFloat);
+                  return [lat, lng] as [number, number];
+                });
+                return (
+                  <Polygon
+                    key={zone.id}
+                    positions={coordinates}
+                    pathOptions={{
+                      color: zone.type === "flood" ? "#3b82f6" : "#f59e0b",
+                      fillColor: zone.type === "flood" ? "#3b82f6" : "#f59e0b",
+                      fillOpacity: 0.2,
+                    }}
+                  >
+                    <Popup>{zone.name}</Popup>
+                  </Polygon>
+                );
+              })}
+
+              {/* POIs */}
+              {pois.map((poi) => {
+                let shouldShow = false;
+                if (poi.type === "medical" && showMedical) shouldShow = true;
+                if (poi.type === "pet-shelter" && showPetShelter) shouldShow = true;
+                if (poi.type === "charging" && showCharging) shouldShow = true;
+
+                if (shouldShow) {
+                  return (
+                    <Marker
+                      key={poi.id}
+                      position={[parseFloat(poi.latitude), parseFloat(poi.longitude)]}
+                    >
+                      <Popup>{poi.name}</Popup>
+                    </Marker>
+                  );
+                }
+                return null;
+              })}
+            </MapContainer>
+          </div>
 
           <Card>
             <CardContent className="p-4 space-y-3">
@@ -374,30 +337,6 @@ export default function EvacuationPlan() {
               </div>
             </CardContent>
           </Card>
-
-          <section>
-            <h2 className="text-brand-blue font-bold text-lg mb-3 flex items-center gap-2">
-              <Navigation size={20} /> Nearest Centers
-            </h2>
-            <div className="space-y-3">
-              {centers.map((center) => (
-                <Card key={center.id} className="border-l-4 border-l-brand-yellow" data-testid={`center-${center.id}`}>
-                  <CardContent className="p-4 flex justify-between items-center">
-                    <div>
-                      <h3 className="font-bold text-brand-blue">{center.name}</h3>
-                      <div className="flex items-center gap-3 text-sm text-slate-500 mt-1">
-                        <span className="flex items-center gap-1"><Navigation size={12} /> {center.distance}</span>
-                        <span className="flex items-center gap-1"><Users size={12} /> {center.capacity}</span>
-                      </div>
-                    </div>
-                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${center.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                      {center.status}
-                    </span>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
 
           <div className="flex gap-2">
             <Button onClick={handleShareLocation} className="flex-1 bg-brand-blue" data-testid="button-share">
