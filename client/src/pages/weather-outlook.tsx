@@ -270,7 +270,7 @@ const WeatherOutlook = () => {
 
   if (loading && !weatherData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 flex items-center justify-center p-4">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -282,7 +282,7 @@ const WeatherOutlook = () => {
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="mx-auto mb-4"
           >
-            <Cloud className="h-12 w-12 text-white" />
+            <Cloud className="h-12 w-12 text-yellow-500" />
           </motion.div>
           <motion.p
             initial={{ y: 20, opacity: 0 }}
@@ -311,14 +311,14 @@ const WeatherOutlook = () => {
 
   // Get background gradient based on weather condition
   const getBackgroundGradient = () => {
-    if (!weatherData) return "from-blue-400 via-purple-500 to-pink-500";
+    if (!weatherData) return "from-blue-950 via-blue-900 to-blue-800";
 
     const condition = weatherData.current.condition.toLowerCase();
-    if (condition.includes("rain")) return "from-blue-500 via-blue-600 to-indigo-700";
-    if (condition.includes("clear")) return "from-yellow-400 via-orange-500 to-red-500";
-    if (condition.includes("cloud")) return "from-gray-400 via-gray-500 to-gray-600";
-    if (condition.includes("thunder")) return "from-gray-700 via-gray-800 to-black";
-    return "from-blue-400 via-purple-500 to-pink-500";
+    if (condition.includes("rain")) return "from-blue-950 via-blue-900 to-blue-800";
+    if (condition.includes("clear")) return "from-blue-950 via-blue-800 to-yellow-500";
+    if (condition.includes("cloud")) return "from-blue-950 via-blue-900 to-blue-700";
+    if (condition.includes("thunder")) return "from-blue-950 via-blue-950 to-blue-900";
+    return "from-blue-950 via-blue-900 to-blue-800";
   };
 
   return (
@@ -329,7 +329,7 @@ const WeatherOutlook = () => {
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="bg-white/20 backdrop-blur-lg rounded-2xl p-4 mb-6 shadow-xl border border-white/30"
+          className="bg-blue-900/50 backdrop-blur-lg rounded-2xl p-4 mb-6 shadow-xl border border-yellow-500/30"
         >
           <div className="flex justify-between items-start mb-3">
             <div className="flex items-center gap-3">
@@ -337,10 +337,10 @@ const WeatherOutlook = () => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={handleBack}
-                className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                className="p-2 hover:bg-yellow-500/20 rounded-full transition-colors"
                 data-testid="button-back"
               >
-                <ArrowLeft size={24} className="text-white" />
+                <ArrowLeft size={24} className="text-yellow-500" />
               </motion.button>
               <div>
                 <motion.h1
@@ -370,7 +370,7 @@ const WeatherOutlook = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/20"
+                className="text-yellow-500 hover:bg-yellow-500/20"
                 onClick={handleRefresh}
                 disabled={refreshing}
                 data-testid="button-refresh-header"
@@ -460,12 +460,12 @@ const WeatherOutlook = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
-                <Card className="p-6 bg-white/20 backdrop-blur-lg rounded-3xl shadow-xl border border-white/30">
+                <Card className="p-6 bg-blue-900/50 backdrop-blur-lg rounded-3xl shadow-xl border border-yellow-500/30">
                   <div className="flex justify-between items-start">
                     <div>
                       <h2 className="text-xl font-bold text-white mb-1">Current Weather</h2>
                       <motion.p 
-                        className="text-6xl font-bold text-white mb-2"
+                        className="text-6xl font-bold text-yellow-500 mb-2"
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 300 }}
@@ -488,10 +488,10 @@ const WeatherOutlook = () => {
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                     <motion.div 
-                      className="flex items-center bg-white/20 p-3 rounded-2xl backdrop-blur-sm"
+                      className="flex items-center bg-blue-800/50 p-3 rounded-2xl backdrop-blur-sm border border-yellow-500/20"
                       whileHover={{ scale: 1.03 }}
                     >
-                      <Sun className="h-8 w-8 text-yellow-300 mr-3" />
+                      <Sun className="h-8 w-8 text-yellow-500 mr-3" />
                       <div>
                         <p className="text-white/80 text-sm">Feels Like</p>
                         <p className="font-bold text-white text-lg">
@@ -501,10 +501,10 @@ const WeatherOutlook = () => {
                     </motion.div>
 
                     <motion.div 
-                      className="flex items-center bg-white/20 p-3 rounded-2xl backdrop-blur-sm"
+                      className="flex items-center bg-blue-800/50 p-3 rounded-2xl backdrop-blur-sm border border-yellow-500/20"
                       whileHover={{ scale: 1.03 }}
                     >
-                      <Wind className="h-8 w-8 text-blue-300 mr-3" />
+                      <Wind className="h-8 w-8 text-yellow-500 mr-3" />
                       <div>
                         <p className="text-white/80 text-sm">Wind</p>
                         <p className="font-bold text-white text-lg">
@@ -514,10 +514,10 @@ const WeatherOutlook = () => {
                     </motion.div>
 
                     <motion.div 
-                      className="flex items-center bg-white/20 p-3 rounded-2xl backdrop-blur-sm"
+                      className="flex items-center bg-blue-800/50 p-3 rounded-2xl backdrop-blur-sm border border-yellow-500/20"
                       whileHover={{ scale: 1.03 }}
                     >
-                      <Droplets className="h-8 w-8 text-cyan-300 mr-3" />
+                      <Droplets className="h-8 w-8 text-yellow-500 mr-3" />
                       <div>
                         <p className="text-white/80 text-sm">Humidity</p>
                         <p className="font-bold text-white text-lg">
@@ -527,10 +527,10 @@ const WeatherOutlook = () => {
                     </motion.div>
 
                     <motion.div 
-                      className="flex items-center bg-white/20 p-3 rounded-2xl backdrop-blur-sm"
+                      className="flex items-center bg-blue-800/50 p-3 rounded-2xl backdrop-blur-sm border border-yellow-500/20"
                       whileHover={{ scale: 1.03 }}
                     >
-                      <Cloud className="h-8 w-8 text-orange-300 mr-3" />
+                      <Cloud className="h-8 w-8 text-yellow-500 mr-3" />
                       <div>
                         <p className="text-white/80 text-sm">Heat Index</p>
                         <p className="font-bold text-white text-lg">
@@ -548,7 +548,7 @@ const WeatherOutlook = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <Card className="p-6 bg-white/20 backdrop-blur-lg rounded-3xl shadow-xl border border-white/30" data-testid="card-forecast">
+                <Card className="p-6 bg-blue-900/50 backdrop-blur-lg rounded-3xl shadow-xl border border-yellow-500/30" data-testid="card-forecast">
                   <h2 className="text-xl font-bold text-white mb-4">5-Day Forecast</h2>
                   <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
                     {weatherData.forecast.map((day, index) => (
@@ -558,7 +558,7 @@ const WeatherOutlook = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.1 * index }}
                         whileHover={{ y: -10 }}
-                        className="flex flex-col items-center min-w-[85px] p-4 rounded-2xl bg-white/20 backdrop-blur-sm"
+                        className="flex flex-col items-center min-w-[85px] p-4 rounded-2xl bg-blue-800/50 backdrop-blur-sm border border-yellow-500/20"
                         data-testid={`forecast-day-${index}`}
                       >
                         <p className="text-white font-bold mb-2">{day.day}</p>
@@ -566,7 +566,7 @@ const WeatherOutlook = () => {
                           {weatherIcons[day.icon] || "🌤️"}
                         </span>
                         <div className="flex flex-col items-center">
-                          <p className="text-white font-bold text-xl">{day.high}°</p>
+                          <p className="text-yellow-500 font-bold text-xl">{day.high}°</p>
                           <p className="text-white/70">{day.low}°</p>
                         </div>
                       </motion.div>
@@ -581,13 +581,13 @@ const WeatherOutlook = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <Card className="p-6 bg-white/20 backdrop-blur-lg rounded-3xl shadow-xl border border-white/30" data-testid="card-heat-index">
+                <Card className="p-6 bg-blue-900/50 backdrop-blur-lg rounded-3xl shadow-xl border border-yellow-500/30" data-testid="card-heat-index">
                   <h2 className="text-xl font-bold text-white mb-4">Heat Index & Safety</h2>
                   <div className="mb-4">
                     <p className="text-white text-lg flex items-center">
-                      <Sun className="h-6 w-6 text-yellow-300 mr-2" />
+                      <Sun className="h-6 w-6 text-yellow-500 mr-2" />
                       Heat Index:{" "}
-                      <span className="font-bold ml-2" data-testid="text-heat-index">
+                      <span className="font-bold ml-2 text-yellow-500" data-testid="text-heat-index">
                         {weatherData.current.heatIndex}°C
                       </span>
                     </p>
@@ -599,7 +599,7 @@ const WeatherOutlook = () => {
                           ? "text-orange-300" 
                           : heatIndexLevel === "Extreme Caution" 
                           ? "text-red-400" 
-                          : "text-green-300"
+                          : "text-yellow-500"
                       }`}
                       data-testid="text-heat-level"
                       initial={{ scale: 0.9 }}
@@ -610,7 +610,7 @@ const WeatherOutlook = () => {
                     </motion.p>
                   </div>
                   {safetyTips.length > 0 && (
-                    <div className="pt-4 border-t border-white/30">
+                    <div className="pt-4 border-t border-yellow-500/30">
                       <p className="font-bold text-white mb-3 flex items-center">
                         <span className="text-xl mr-2">⚠️</span> Safety Tips:
                       </p>
@@ -621,10 +621,10 @@ const WeatherOutlook = () => {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 * index }}
-                            className="flex items-center bg-white/10 p-3 rounded-xl"
+                            className="flex items-center bg-blue-800/30 p-3 rounded-xl border border-yellow-500/20"
                             data-testid={`safety-tip-${index}`}
                           >
-                            <div className="w-2 h-2 rounded-full bg-white mr-3"></div>
+                            <div className="w-2 h-2 rounded-full bg-yellow-500 mr-3"></div>
                             <p className="text-white/90">{tip}</p>
                           </motion.div>
                         ))}
@@ -640,11 +640,11 @@ const WeatherOutlook = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <Card className="p-6 bg-white/20 backdrop-blur-lg rounded-3xl shadow-xl border border-white/30" data-testid="card-alerts">
+                <Card className="p-6 bg-blue-900/50 backdrop-blur-lg rounded-3xl shadow-xl border border-yellow-500/30" data-testid="card-alerts">
                   <h2 className="text-xl font-bold text-white mb-4">Weather Alerts</h2>
                   <div className="space-y-4">
                     <motion.div 
-                      className="flex items-center justify-between p-4 rounded-2xl bg-yellow-500/20 backdrop-blur-sm"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-yellow-500/20 backdrop-blur-sm border border-yellow-500/30"
                       whileHover={{ scale: 1.02 }}
                     >
                       <div className="flex items-center">
@@ -661,7 +661,7 @@ const WeatherOutlook = () => {
                     </motion.div>
 
                     <motion.div 
-                      className="flex items-center justify-between p-4 rounded-2xl bg-red-500/20 backdrop-blur-sm"
+                      className="flex items-center justify-between p-4 rounded-2xl bg-red-500/20 backdrop-blur-sm border border-red-500/30"
                       whileHover={{ scale: 1.02 }}
                     >
                       <div className="flex items-center">
@@ -692,7 +692,7 @@ const WeatherOutlook = () => {
             <Button
               onClick={handleRefresh}
               disabled={refreshing}
-              className="w-full max-w-xs flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white border border-white/30 backdrop-blur-lg"
+              className="w-full max-w-xs flex items-center gap-2 bg-blue-800/50 hover:bg-blue-700/50 text-white border border-yellow-500/30 backdrop-blur-lg"
               data-testid="button-refresh"
             >
               <RefreshCw

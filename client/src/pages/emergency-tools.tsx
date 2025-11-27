@@ -96,8 +96,8 @@ export default function EmergencyToolsPlus() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-900 text-white max-w-md mx-auto shadow-2xl">
-      <header className="bg-gradient-to-r from-blue-700 to-cyan-600 text-white p-4 flex items-center gap-3">
+    <div className="min-h-screen flex flex-col bg-blue-950 text-white max-w-md mx-auto shadow-2xl">
+      <header className="bg-blue-950 text-white p-4 flex items-center gap-3 border-b-2 border-yellow-500">
         <button
           onClick={() => setLocation("/")}
           className="p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -113,12 +113,12 @@ export default function EmergencyToolsPlus() {
       </header>
 
       {/* Tabs */}
-      <nav className="flex justify-around bg-slate-800 text-sm font-semibold uppercase border-b border-slate-700">
+      <nav className="flex justify-around bg-blue-900 text-sm font-semibold uppercase border-b border-blue-800">
         {["Light", "Sound", "Safety", "Info"].map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex-1 py-3 ${tab === t ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-400"}`}
+            className={`flex-1 py-3 ${tab === t ? "text-yellow-500 border-b-2 border-yellow-500" : "text-white"}`}
           >
             {t}
           </button>
@@ -133,8 +133,8 @@ export default function EmergencyToolsPlus() {
               onClick={() => setFlashlightOn(!isFlashlightOn)}
               className={`col-span-2 aspect-video rounded-2xl flex flex-col items-center justify-center gap-3 transition-all shadow-lg ${
                 isFlashlightOn
-                  ? "bg-yellow-100 text-yellow-800 border-4 border-yellow-400"
-                  : "bg-slate-800 text-slate-400 border-2 border-slate-700"
+                  ? "bg-yellow-500 text-blue-950 border-4 border-white"
+                  : "bg-blue-900 text-white border-2 border-blue-800"
               }`}
             >
               <Flashlight size={48} />
@@ -147,8 +147,8 @@ export default function EmergencyToolsPlus() {
               onClick={() => setStrobeOn(!isStrobeOn)}
               className={`col-span-2 aspect-video rounded-2xl border-2 flex flex-col items-center justify-center gap-3 shadow-md ${
                 isStrobeOn
-                  ? "bg-yellow-200 border-yellow-400 text-yellow-800 animate-pulse"
-                  : "bg-slate-800 border-slate-700 text-slate-400"
+                  ? "bg-yellow-500 text-blue-950 border-white animate-pulse"
+                  : "bg-blue-900 border-blue-800 text-white"
               }`}
             >
               <BellRing size={36} />
@@ -164,8 +164,8 @@ export default function EmergencyToolsPlus() {
               onClick={toggleSiren}
               className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center gap-3 ${
                 isSirenOn
-                  ? "bg-red-600 text-white animate-pulse"
-                  : "bg-slate-800 text-slate-400"
+                  ? "bg-yellow-500 text-blue-950 animate-pulse"
+                  : "bg-blue-900 text-white border-blue-800"
               }`}
             >
               <Siren size={36} />
@@ -175,8 +175,8 @@ export default function EmergencyToolsPlus() {
               onClick={playWhistle}
               className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center gap-3 ${
                 isWhistleOn
-                  ? "bg-cyan-600 text-white animate-bounce"
-                  : "bg-slate-800 text-slate-400"
+                  ? "bg-yellow-500 text-blue-950 animate-bounce"
+                  : "bg-blue-900 text-white border-blue-800"
               }`}
             >
               <Volume2 size={36} />
@@ -201,20 +201,20 @@ export default function EmergencyToolsPlus() {
           <>
             <button
               onClick={() => alert("SOS signal sent!")}
-              className="col-span-2 bg-red-600 rounded-2xl p-4 text-xl font-bold uppercase tracking-wide flex items-center justify-center gap-3 border-2 border-red-400 shadow-lg active:scale-95"
+              className="col-span-2 bg-yellow-500 rounded-2xl p-4 text-xl font-bold uppercase tracking-wide flex items-center justify-center gap-3 border-2 border-white shadow-lg active:scale-95 text-blue-950"
             >
               <AlertOctagon /> Send SOS
             </button>
 
             <button
               onClick={handleShareLocation}
-              className="col-span-2 bg-cyan-600 rounded-2xl p-4 text-lg font-semibold tracking-wide flex items-center justify-center gap-3 border-2 border-cyan-400 shadow-md active:scale-95"
+              className="col-span-2 bg-blue-800 rounded-2xl p-4 text-lg font-semibold tracking-wide flex items-center justify-center gap-3 border-2 border-yellow-500 shadow-md active:scale-95"
             >
               <MapPin /> Share My Location
             </button>
 
             {locationLink && (
-              <p className="col-span-2 text-center text-sm mt-2 text-cyan-400 break-all">
+              <p className="col-span-2 text-center text-sm mt-2 text-yellow-500 break-all">
                 {locationLink}
               </p>
             )}
@@ -231,11 +231,11 @@ export default function EmergencyToolsPlus() {
               value={contacts}
               onChange={(e) => setContacts(e.target.value)}
               rows={5}
-              className="bg-slate-800 border border-slate-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-cyan-500 resize-none"
+              className="bg-blue-900 border border-blue-800 rounded-xl p-3 text-white focus:ring-2 focus:ring-yellow-500 resize-none"
             />
             <button
               onClick={saveContacts}
-              className="bg-cyan-600 py-2 rounded-xl font-semibold hover:bg-cyan-500 transition-all"
+              className="bg-yellow-500 py-2 rounded-xl font-semibold hover:bg-yellow-400 transition-all text-blue-950"
             >
               Save Contacts
             </button>
