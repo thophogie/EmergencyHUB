@@ -13,7 +13,7 @@ export function Header() {
   }, []);
 
   return (
-    <div className="flex flex-col w-full z-10">
+    <div className="flex flex-col w-full sticky top-0 z-50">
       {/* Main Header with Gradient */}
       <motion.div
         className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 pt-3 pb-2 px-4 flex flex-col items-center justify-center text-white relative shadow-xl"
