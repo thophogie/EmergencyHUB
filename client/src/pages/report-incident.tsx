@@ -212,7 +212,7 @@ export default function ReportIncident() {
       contactInfo,
       incidentDetails,
       media: { photos: photos.length, videos: videos.length }
-    });
+    } as any);
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,7 +253,7 @@ export default function ReportIncident() {
     return weather ? weather.icon : Sun;
   };
 
-  const handleLocationChange = (e) => {
+  const handleLocationChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     // This function would ideally open a map to select a new location.
     // For now, it just logs a message.
     console.log("Changing location is not implemented yet.");
@@ -794,7 +794,7 @@ export default function ReportIncident() {
         >
           Cancel
         </Button>
-        <Button 
+        <motion.button 
           className="flex-[2] bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-bold h-12 rounded-xl shadow-md shadow-yellow-500/20 transition-all"
           onClick={handleSubmit}
           disabled={!selectedType || submitIncident.isPending}
@@ -809,7 +809,7 @@ export default function ReportIncident() {
           ) : (
             "Submit Report"
           )}
-        </Button>
+        </motion.button>
       </footer>
     </div>
   );
