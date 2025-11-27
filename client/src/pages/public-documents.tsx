@@ -13,7 +13,7 @@ export default function PublicDocuments() {
     { title: "Community Drill Report", size: "3.5 MB", date: "Jul 20, 2024", type: "xls" },
   ];
 
-  const getFileIcon = (type) => {
+  const getFileIcon = (type: string) => {
     switch (type) {
       case "pdf": return <FileText className="text-red-500" size={24} />;
       case "doc": return <FileText className="text-blue-500" size={24} />;
@@ -22,7 +22,7 @@ export default function PublicDocuments() {
     }
   };
 
-  const getFileBgColor = (type) => {
+  const getFileBgColor = (type: string) => {
     switch (type) {
       case "pdf": return "bg-red-50";
       case "doc": return "bg-blue-50";

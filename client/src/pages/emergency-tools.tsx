@@ -26,24 +26,25 @@ export default function EmergencyToolsPlus() {
       "911, Fire: 101, Ambulance: 102",
   );
 
-  const audioRef = useRef(null);
-  const whistleRef = useRef(null);
-  const [track, setTrack] = useState(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const whistleRef = useRef<HTMLAudioElement>(null);
+  const [track, setTrack] = useState<MediaStreamTrack | null>(null);
 
   // 🔦 Flashlight API
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-    let stream;
+    let stream: MediaStream | null = null;
     const enableTorch = async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
         });
-        const track = stream.getVideoTracks()[0];
-        setTrack(track);
-        if (track.getCapabilities().torch) {
-          await track.applyConstraints({
-            advanced: [{ torch: isFlashlightOn }],
+        const videoTrack = stream.getVideoTracks()[0];
+        setTrack(videoTrack);
+        const capabilities = videoTrack.getCapabilities() as MediaTrackCapabilities & { torch?: boolean };
+        if (capabilities.torch) {
+          await videoTrack.applyConstraints({
+            advanced: [{ torch: isFlashlightOn } as MediaTrackConstraintSet],
           });
         }
       } catch (err) {
@@ -52,7 +53,7 @@ export default function EmergencyToolsPlus() {
     };
     enableTorch();
     return () => {
-      if (stream) stream.getTracks().forEach((t) => t.stop());
+      if (stream) stream.getTracks().forEach((t: MediaStreamTrack) => t.stop());
     };
   }, [isFlashlightOn]);
 
@@ -125,7 +126,7 @@ export default function EmergencyToolsPlus() {
         ))}
       </nav>
 
-      <main className="flex-1 p-6 grid grid-cols-2 gap-4">
+      <main className="flex-1 overflow-y-auto p-6 grid grid-cols-2 gap-4">
         {/* LIGHT TAB */}
         {tab === "Light" && (
           <>

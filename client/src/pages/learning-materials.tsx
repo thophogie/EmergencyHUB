@@ -9,49 +9,54 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
+type Document = {
+  id: string;
+  name: string;
+  mimeType: string;
+  size: string;
+  modifiedTime: string;
+  webViewLink: string;
+};
+
+const mockDocuments: Document[] = [
+  {
+    id: "1",
+    name: "Emergency Response Manual.pdf",
+    mimeType: "application/pdf",
+    size: "2.4 MB",
+    modifiedTime: "2023-10-15",
+    webViewLink: "#",
+  },
+  {
+    id: "2",
+    name: "First Aid Procedures.docx",
+    mimeType: "application/vnd.google-apps.document",
+    size: "1.8 MB",
+    modifiedTime: "2023-11-02",
+    webViewLink: "#",
+  },
+  {
+    id: "3",
+    name: "Disaster Preparedness Guide.pptx",
+    mimeType: "application/vnd.google-apps.presentation",
+    size: "5.2 MB",
+    modifiedTime: "2023-09-28",
+    webViewLink: "#",
+  },
+  {
+    id: "4",
+    name: "Evacuation Plans.pdf",
+    mimeType: "application/pdf",
+    size: "3.1 MB",
+    modifiedTime: "2023-12-10",
+    webViewLink: "#",
+  },
+];
+
 export default function LearningMaterials() {
   const [, setLocation] = useLocation();
-  const [documents, setDocuments] = useState([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Google Drive Folder ID
-  const FOLDER_ID = "1vMJmirCo-PTLjEtU7AsCYUxau-Svesk5";
-
-  // Mock data for documents (in a real app, this would come from Google Drive API)
-  const mockDocuments = [
-    {
-      id: "1",
-      name: "Emergency Response Manual.pdf",
-      mimeType: "application/pdf",
-      size: "2.4 MB",
-      modifiedTime: "2023-10-15",
-      webViewLink: "#",
-    },
-    {
-      id: "2",
-      name: "First Aid Procedures.docx",
-      mimeType: "application/vnd.google-apps.document",
-      size: "1.8 MB",
-      modifiedTime: "2023-11-02",
-      webViewLink: "#",
-    },
-    {
-      id: "3",
-      name: "Disaster Preparedness Guide.pptx",
-      mimeType: "application/vnd.google-apps.presentation",
-      size: "5.2 MB",
-      modifiedTime: "2023-09-28",
-      webViewLink: "#",
-    },
-    {
-      id: "4",
-      name: "Evacuation Plans.pdf",
-      mimeType: "application/pdf",
-      size: "3.1 MB",
-      modifiedTime: "2023-12-10",
-      webViewLink: "#",
-    },
-  ];
 
   useEffect(() => {
     // Simulate API call to Google Drive
@@ -71,7 +76,7 @@ export default function LearningMaterials() {
     fetchDocuments();
   }, []);
 
-  const getFileIcon = (mimeType) => {
+  const getFileIcon = (mimeType: string) => {
     if (mimeType.includes("pdf")) return "📄";
     if (mimeType.includes("document")) return "📝";
     if (mimeType.includes("presentation")) return "📊";
@@ -79,7 +84,7 @@ export default function LearningMaterials() {
     return "📁";
   };
 
-  const formatMimeType = (mimeType) => {
+  const formatMimeType = (mimeType: string) => {
     if (mimeType.includes("pdf")) return "PDF Document";
     if (mimeType.includes("document")) return "Google Doc";
     if (mimeType.includes("presentation")) return "Presentation";

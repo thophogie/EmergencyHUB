@@ -10,7 +10,7 @@ export default function Home() {
       
       <Header />
       
-      <main className="flex-1 relative z-10 overflow-hidden flex flex-col">
+      <main className="flex-1 relative z-10 overflow-y-auto flex flex-col">
         <DashboardGrid />
       </main>
 

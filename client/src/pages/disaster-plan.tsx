@@ -233,7 +233,7 @@ export default function DisasterPlan() {
     },
   ];
 
-  const getColorClasses = (color) => {
+  const getColorClasses = (color: string) => {
     const colors = {
       blue: {
         bg: "bg-blue-100",
@@ -278,7 +278,7 @@ export default function DisasterPlan() {
           "data-[state=open]:border-orange-500 data-[state=open]:ring-orange-500/20",
       },
     };
-    return colors[color] || colors.blue;
+    return colors[color as keyof typeof colors] || colors.blue;
   };
 
   return (
