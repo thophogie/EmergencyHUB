@@ -77,7 +77,7 @@ export function Header() {
           transition={{ delay: 0.5 }}
         >
           <div className="text-yellow-200 font-mono text-sm font-medium">
-            {format(currentTime, "EEEE, MMMM d, yyyy • h:mm:ss a")}
+            {format(currentTime, "MMMM d, yyyy • h:mm:ss a")}
           </div>
         </motion.div>
       </motion.div>

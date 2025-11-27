@@ -101,7 +101,7 @@ export function DashboardGrid() {
   ];
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div
