@@ -35,7 +35,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="overflow-hidden h-screen w-screen">
+        <div className="min-h-screen w-screen">
           <Toaster />
           <Router />
         </div>
