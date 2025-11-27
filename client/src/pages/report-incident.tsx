@@ -127,12 +127,12 @@ const WEATHER_CONDITIONS = [
 export default function ReportIncident() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [selectedType, setSelectedType] = useState(null);
-  const [severity, setSeverity] = useState(null);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [severity, setSeverity] = useState<string>("");
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [description, setDescription] = useState("");
-  const [photos, setPhotos] = useState([]);
-  const [videos, setVideos] = useState([]);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [videos, setVideos] = useState<File[]>([]);
   const [numberOfPeople, setNumberOfPeople] = useState("");
   const [contactInfo, setContactInfo] = useState({ 
     name: "", 
@@ -148,12 +148,12 @@ export default function ReportIncident() {
     estimatedDamage: "",
     injuries: "",
     fatalities: "",
-    responseAgencies: [],
+    responseAgencies: [] as string[],
     specialNotes: ""
   });
   const [showSensitiveFields, setShowSensitiveFields] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
-  const [userLocationError, setUserLocationError] = useState(null);
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
+  const [userLocationError, setUserLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -191,7 +191,7 @@ export default function ReportIncident() {
     },
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedType || !description) {
       toast({
@@ -215,40 +215,40 @@ export default function ReportIncident() {
     });
   };
 
-  const handlePhotoUpload = (e) => {
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newPhotos = Array.from(e.target.files);
-      setPhotos(prev => [...prev, ...newPhotos]);
+      setPhotos(prev => [...prev, ...newPhotos] as File[]);
     }
   };
 
-  const handleVideoUpload = (e) => {
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newVideos = Array.from(e.target.files);
-      setVideos(prev => [...prev, ...newVideos]);
+      setVideos(prev => [...prev, ...newVideos] as File[]);
     }
   };
 
-  const removePhoto = (index) => {
+  const removePhoto = (index: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  const getTypeIcon = (typeId) => {
+  const getTypeIcon = (typeId: string) => {
     const type = INCIDENT_TYPES.find(t => t.id === typeId);
     return type ? type.icon : AlertTriangle;
   };
 
-  const getVehicleIcon = (vehicleId) => {
+  const getVehicleIcon = (vehicleId: string) => {
     const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleId);
     return vehicle ? vehicle.icon : Car;
   };
 
-  const getLocationIcon = (locationId) => {
+  const getLocationIcon = (locationId: string) => {
     const location = LOCATION_TYPES.find(l => l.id === locationId);
     return location ? location.icon : MapPin;
   };
 
-  const getWeatherIcon = (weatherId) => {
+  const getWeatherIcon = (weatherId: string) => {
     const weather = WEATHER_CONDITIONS.find(w => w.id === weatherId);
     return weather ? weather.icon : Sun;
   };
