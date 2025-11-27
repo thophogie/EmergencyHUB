@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -128,12 +127,12 @@ const WEATHER_CONDITIONS = [
 export default function ReportIncident() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [severity, setSeverity] = useState<string>("");
+  const [selectedType, setSelectedType] = useState(null);
+  const [severity, setSeverity] = useState(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [description, setDescription] = useState("");
-  const [photos, setPhotos] = useState<File[]>([]);
-  const [videos, setVideos] = useState<File[]>([]);
+  const [photos, setPhotos] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [numberOfPeople, setNumberOfPeople] = useState("");
   const [contactInfo, setContactInfo] = useState({ 
     name: "", 
@@ -149,12 +148,12 @@ export default function ReportIncident() {
     estimatedDamage: "",
     injuries: "",
     fatalities: "",
-    responseAgencies: [] as string[],
+    responseAgencies: [],
     specialNotes: ""
   });
   const [showSensitiveFields, setShowSensitiveFields] = useState(false);
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [userLocationError, setUserLocationError] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [userLocationError, setUserLocationError] = useState(null);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -192,7 +191,7 @@ export default function ReportIncident() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedType || !description) {
       toast({
@@ -213,48 +212,48 @@ export default function ReportIncident() {
       contactInfo,
       incidentDetails,
       media: { photos: photos.length, videos: videos.length }
-    } as any);
+    });
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = (e) => {
     if (e.target.files) {
       const newPhotos = Array.from(e.target.files);
-      setPhotos(prev => [...prev, ...newPhotos] as File[]);
+      setPhotos(prev => [...prev, ...newPhotos]);
     }
   };
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = (e) => {
     if (e.target.files) {
       const newVideos = Array.from(e.target.files);
-      setVideos(prev => [...prev, ...newVideos] as File[]);
+      setVideos(prev => [...prev, ...newVideos]);
     }
   };
 
-  const removePhoto = (index: number) => {
+  const removePhoto = (index) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
   };
 
-  const getTypeIcon = (typeId: string) => {
+  const getTypeIcon = (typeId) => {
     const type = INCIDENT_TYPES.find(t => t.id === typeId);
     return type ? type.icon : AlertTriangle;
   };
 
-  const getVehicleIcon = (vehicleId: string) => {
+  const getVehicleIcon = (vehicleId) => {
     const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleId);
     return vehicle ? vehicle.icon : Car;
   };
 
-  const getLocationIcon = (locationId: string) => {
+  const getLocationIcon = (locationId) => {
     const location = LOCATION_TYPES.find(l => l.id === locationId);
     return location ? location.icon : MapPin;
   };
 
-  const getWeatherIcon = (weatherId: string) => {
+  const getWeatherIcon = (weatherId) => {
     const weather = WEATHER_CONDITIONS.find(w => w.id === weatherId);
     return weather ? weather.icon : Sun;
   };
 
-  const handleLocationChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleLocationChange = (e) => {
     // This function would ideally open a map to select a new location.
     // For now, it just logs a message.
     console.log("Changing location is not implemented yet.");
@@ -799,6 +798,8 @@ export default function ReportIncident() {
           className="flex-[2] bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-bold h-12 rounded-xl shadow-md shadow-yellow-500/20 transition-all"
           onClick={handleSubmit}
           disabled={!selectedType || submitIncident.isPending}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
           {submitIncident.isPending ? (
             <span className="flex items-center gap-2">

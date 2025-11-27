@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, FileText, Download, Search, Clock, File } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useLocation } from "wouter";
 import {
   ArrowLeft,

@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState } from "react";
 import { Home, Mail, User, Send, Loader2 } from "lucide-react";
 import {

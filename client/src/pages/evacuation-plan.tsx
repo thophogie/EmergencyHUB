@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { MapContainer, TileLayer, Marker, Popup, Polygon } from "react-leaflet";

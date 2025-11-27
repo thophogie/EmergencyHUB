@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { ArrowLeft, CheckCircle2, Circle, Plus, Phone, Share2, Droplets, Heart, Shirt, Wrench, FileText, Users, AlertTriangle } from "lucide-react";
