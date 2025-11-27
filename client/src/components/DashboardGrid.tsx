@@ -101,37 +101,17 @@ export function DashboardGrid() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+    <div className="min-h-full bg-gradient-to-br from-blue-950 via-blue-900 to-blue-800 relative">
+      {/* Simplified Background Pattern for better mobile performance */}
+      <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: `
-            radial-gradient(circle at 10% 20%, yellow 0.5px, transparent 1px),
-            radial-gradient(circle at 90% 80%, yellow 0.5px, transparent 1px),
-            radial-gradient(circle at 30% 70%, yellow 0.5px, transparent 1px),
-            radial-gradient(circle at 70% 30%, yellow 0.5px, transparent 1px)
-          `,
+            backgroundImage: `radial-gradient(circle at 50% 50%, yellow 1px, transparent 1px)`,
             backgroundSize: "50px 50px",
           }}
         ></div>
       </div>
-
-      {/* Secondary Pattern Overlay */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `
-          linear-gradient(45deg, #ffffff 25%, transparent 25%),
-          linear-gradient(-45deg, #ffffff 25%, transparent 25%),
-          linear-gradient(45deg, transparent 75%, #ffffff 75%),
-          linear-gradient(-45deg, transparent 75%, #ffffff 75%)
-        `,
-          backgroundSize: "20px 20px",
-          backgroundPosition: "0 0, 0 10px, 10px -10px, -10px 0px",
-        }}
-      ></div>
 
       {/* Header Section */}
       <motion.div
@@ -163,7 +143,7 @@ export function DashboardGrid() {
       </motion.div>
 
       {/* Main Grid */}
-      <div className="px-4 pb-15 relative z-10">
+      <div className="px-4 py-4 relative z-10">
         <div className="grid grid-cols-2 gap-4">
           {buttons.map((btn, index) => (
             <DashboardButton

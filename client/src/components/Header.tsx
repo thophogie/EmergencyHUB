@@ -21,13 +21,10 @@ export function Header() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-yellow-400 rounded-full mix-blend-soft-light opacity-20 animate-pulse"></div>
-          <div
-            className="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-300 rounded-full mix-blend-soft-light opacity-20 animate-pulse"
-            style={{ animationDelay: "1s" }}
-          ></div>
+        {/* Simplified Decorative Elements for better performance */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-30">
+          <div className="absolute -top-8 -left-8 w-32 h-32 bg-yellow-400 rounded-full mix-blend-soft-light"></div>
+          <div className="absolute -bottom-8 -right-8 w-24 h-24 bg-yellow-300 rounded-full mix-blend-soft-light"></div>
         </div>
 
         {/* Logos and Title */}

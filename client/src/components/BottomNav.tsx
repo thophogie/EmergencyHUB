@@ -70,14 +70,14 @@ export function BottomNav() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
+    <div className="fixed bottom-0 left-0 right-0 z-50 max-w-md mx-auto">
       <Drawer>
         {/* Emergency Button - Floating above */}
-        <div className="absolute -top-12 left-0 right-0 flex justify-center px-15">
+        <div className="absolute -top-11 left-0 right-0 flex justify-center px-4">
           <DrawerTrigger asChild>
-            <button className="bg-brand-red hover:bg-brand-red-hover text-white w-full max-w-md py-1 rounded-full shadow-lg flex items-center justify-center gap-2 border-2 border-white active:scale-95 transition-transform animate-pulse cursor-pointer">
-              <PhoneCall size={24} fill="white" />
-              <span className="font-bold text-lg uppercase tracking-wide">
+            <button className="bg-brand-red hover:bg-brand-red-hover text-white w-full py-2.5 rounded-full shadow-lg flex items-center justify-center gap-2 border-2 border-white active:scale-95 transition-transform animate-pulse cursor-pointer touch-manipulation">
+              <PhoneCall size={22} fill="white" />
+              <span className="font-bold text-base uppercase tracking-wide">
                 Emergency Hotlines!
               </span>
             </button>
@@ -85,32 +85,32 @@ export function BottomNav() {
         </div>
 
         {/* Navigation Bar */}
-        <div className="bg-brand-yellow h-17 flex items-end justify-around pb-4 pt-8 px-6 rounded-t-3xl shadow-[0_-4px_10px_rgba(0,0,0,0.2)]">
+        <div className="bg-brand-yellow h-16 flex items-end justify-around pb-3 pt-7 px-6 rounded-t-3xl shadow-[0_-4px_10px_rgba(0,0,0,0.2)]">
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors"
+            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
             data-testid="button-home"
           >
-            <div className="bg-white p-2 rounded-full shadow-sm">
-              <Home size={24} className="text-brand-blue" />
+            <div className="bg-white p-2.5 rounded-full shadow-sm">
+              <Home size={22} className="text-brand-blue" />
             </div>
           </button>
 
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors"
+            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
             onClick={() => setSmsDialogOpen(true)}
             data-testid="button-sms"
           >
-            <div className="bg-brand-blue p-2 rounded-full shadow-sm">
-              <Mail size={24} className="text-white" />
+            <div className="bg-brand-blue p-2.5 rounded-full shadow-sm">
+              <Mail size={22} className="text-white" />
             </div>
           </button>
 
           <button 
-            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors"
+            className="flex flex-col items-center gap-1 text-brand-blue hover:text-white transition-colors p-2 touch-manipulation"
             data-testid="button-profile"
           >
-            <div className="bg-white p-2 rounded-full shadow-sm">
-              <User size={24} className="text-brand-blue" />
+            <div className="bg-white p-2.5 rounded-full shadow-sm">
+              <User size={22} className="text-brand-blue" />
             </div>
           </button>
         </div>
