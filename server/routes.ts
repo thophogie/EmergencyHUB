@@ -9,6 +9,7 @@ import {
   insertCheckInSchema
 } from "@shared/schema";
 import { z } from "zod";
+import { sendSMS } from "./twilio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -200,6 +201,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Config Route for Google API Key
   app.get("/api/config/google-api-key", async (req, res) => {
     res.json({ apiKey: process.env.GOOGLE_API || '' });
+  });
+
+  // SMS Route using Twilio integration
+  const smsSchema = z.object({
+    to: z.string().min(10, "Phone number is required"),
+    message: z.string().min(1, "Message is required")
+  });
+
+  app.post("/api/sms/send", async (req, res) => {
+    try {
+      const { to, message } = smsSchema.parse(req.body);
+      const result = await sendSMS(to, message);
+      res.json({ success: true, sid: result.sid });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("SMS send error:", error);
+      res.status(500).json({ error: "Failed to send SMS" });
+    }
   });
 
   // Weather API Routes
