@@ -65,6 +65,7 @@
     /* Enable smooth scrolling */
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    
   }
 }
 
