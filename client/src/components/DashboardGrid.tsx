@@ -105,19 +105,6 @@ export function DashboardGrid() {
         ></div>
       </div>
 
-      {/* Header Section */}
-      <div className="pt-1 px-8 relative z-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-yellow-300 mt-1">
-              Be Prepared. Stay Safe.
-            </p>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg">
-            <ShieldAlert className="text-blue-950" size={24} />
-          </div>
-        </div>
-      </div>
 
       {/* Main Grid */}
       <div className="px-4 py-4 relative z-10 pb-28">
