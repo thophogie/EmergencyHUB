@@ -301,15 +301,15 @@ export default function EmergencyToolsPlus() {
               }}
               className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center gap-3 shadow-md relative overflow-hidden ${
                 isPoliceBlinkerOn
-                  ? "animate-pulse"
+                  ? ""
                   : "bg-blue-900 border-blue-800 text-white"
               }`}
             >
               <div className="absolute inset-0 flex">
-                <div className={`w-1/2 h-full ${isPoliceBlinkerOn ? 'bg-red-500 animate-pulse' : 'bg-red-700'}`}></div>
-                <div className={`w-1/2 h-full ${isPoliceBlinkerOn ? 'bg-blue-500 animate-pulse delay-150' : 'bg-blue-700'}`}></div>
+                <div className={`w-1/2 h-full transition-colors duration-300 ${isPoliceBlinkerOn ? 'bg-red-600 animate-pulse' : 'bg-red-900/50'}`}></div>
+                <div className={`w-1/2 h-full transition-colors duration-300 ${isPoliceBlinkerOn ? 'bg-blue-600 animate-pulse' : 'bg-blue-900/50'}`}></div>
               </div>
-              <div className="relative z-10 flex flex-col items-center">
+              <div className="relative z-10 flex flex-col items-center text-white drop-shadow-lg">
                 <Car size={36} />
                 <span className="font-bold text-sm mt-1">Police Blinker</span>
               </div>
