@@ -16,7 +16,9 @@ import {
   Trash2,
   Plus,
   User,
-  Hash
+  Hash,
+  Car,
+  Zap
 } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -25,6 +27,7 @@ export default function EmergencyToolsPlus() {
   const [tab, setTab] = useState("Light");
   const [isFlashlightOn, setFlashlightOn] = useState(false);
   const [isStrobeOn, setStrobeOn] = useState(false);
+  const [isPoliceBlinkerOn, setPoliceBlinkerOn] = useState(false);
   const [isSirenOn, setSirenOn] = useState(false);
   const [isWhistleOn, setWhistleOn] = useState(false);
   const [locationLink, setLocationLink] = useState("");
@@ -42,8 +45,14 @@ export default function EmergencyToolsPlus() {
   const [track, setTrack] = useState(null);
   const compassRef = useRef(null);
 
-  
   // Save contacts to localStorage
+  useEffect(() => {
+    const savedContacts = localStorage.getItem("emergencyContacts");
+    if (savedContacts) {
+      setContacts(JSON.parse(savedContacts));
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem("emergencyContacts", JSON.stringify(contacts));
   }, [contacts]);
@@ -73,6 +82,19 @@ export default function EmergencyToolsPlus() {
       if (stream) stream.getTracks().forEach((t) => t.stop());
     };
   }, [isFlashlightOn]);
+
+  // 🚨 Police Blinker Effect
+  useEffect(() => {
+    let interval;
+    if (isPoliceBlinkerOn) {
+      interval = setInterval(() => {
+        setFlashlightOn(prev => !prev);
+      }, 300);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPoliceBlinkerOn]);
 
   // 🧭 Compass
   useEffect(() => {
@@ -190,6 +212,24 @@ export default function EmergencyToolsPlus() {
     generateMorseCode();
   }, [morseMessage]);
 
+  // Enhanced Compass Visualization
+  const getDirectionLabel = (degrees) => {
+    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+    const index = Math.round(degrees / 45) % 8;
+    return directions[index];
+  };
+
+  const getCardinalDirection = (degrees) => {
+    if (degrees >= 337.5 || degrees < 22.5) return 'North';
+    if (degrees >= 22.5 && degrees < 67.5) return 'Northeast';
+    if (degrees >= 67.5 && degrees < 112.5) return 'East';
+    if (degrees >= 112.5 && degrees < 157.5) return 'Southeast';
+    if (degrees >= 157.5 && degrees < 202.5) return 'South';
+    if (degrees >= 202.5 && degrees < 247.5) return 'Southwest';
+    if (degrees >= 247.5 && degrees < 292.5) return 'West';
+    return 'Northwest';
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-blue-950 text-white max-w-md mx-auto shadow-2xl">
       <header className="bg-blue-950 text-white p-4 flex items-center gap-3 border-b-2 border-yellow-500">
@@ -240,14 +280,39 @@ export default function EmergencyToolsPlus() {
 
             <button
               onClick={() => setStrobeOn(!isStrobeOn)}
-              className={`col-span-2 aspect-video rounded-2xl border-2 flex flex-col items-center justify-center gap-3 shadow-md ${
+              className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center gap-3 shadow-md ${
                 isStrobeOn
-                  ? "bg-yellow-500 text-blue-950 border-white animate-pulse"
+                  ? "bg-yellow-500 text-blue-950 animate-pulse"
                   : "bg-blue-900 border-blue-800 text-white"
               }`}
             >
               <BellRing size={36} />
-              <span className="font-bold text-lg">Strobe Light</span>
+              <span className="font-bold text-sm">Strobe Light</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setPoliceBlinkerOn(!isPoliceBlinkerOn);
+                if (!isPoliceBlinkerOn) {
+                  setFlashlightOn(true);
+                } else {
+                  setFlashlightOn(false);
+                }
+              }}
+              className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center gap-3 shadow-md relative overflow-hidden ${
+                isPoliceBlinkerOn
+                  ? "animate-pulse"
+                  : "bg-blue-900 border-blue-800 text-white"
+              }`}
+            >
+              <div className="absolute inset-0 flex">
+                <div className={`w-1/2 h-full ${isPoliceBlinkerOn ? 'bg-red-500 animate-pulse' : 'bg-red-700'}`}></div>
+                <div className={`w-1/2 h-full ${isPoliceBlinkerOn ? 'bg-blue-500 animate-pulse delay-150' : 'bg-blue-700'}`}></div>
+              </div>
+              <div className="relative z-10 flex flex-col items-center">
+                <Car size={36} />
+                <span className="font-bold text-sm mt-1">Police Blinker</span>
+              </div>
             </button>
           </>
         )}
@@ -319,11 +384,88 @@ export default function EmergencyToolsPlus() {
         {/* NAVIGATION TAB */}
         {tab === "Navigation" && (
           <>
-            <div className="col-span-2 bg-blue-900 rounded-2xl p-6 border-2 border-blue-800 flex flex-col items-center justify-center">
-              <Compass size={64} className="text-yellow-500 mb-4" style={{ transform: `rotate(${-compassHeading}deg)` }} />
-              <h3 className="text-xl font-bold mb-2">Digital Compass</h3>
-              <p className="text-2xl font-mono">{compassHeading}°</p>
-              <p className="text-sm text-white/70 mt-2">Point device North</p>
+            <div className="col-span-2 bg-blue-900 rounded-2xl p-6 border-2 border-blue-800 flex flex-col items-center justify-center relative overflow-hidden">
+              {/* Enhanced Compass Visualization */}
+              <div className="relative w-64 h-64 mb-6">
+                {/* Outer ring with degree markers */}
+                <div className="absolute inset-0 rounded-full border-4 border-blue-700 bg-gradient-to-br from-blue-800 to-blue-900">
+                  {/* Degree markers */}
+                  {[...Array(36)].map((_, i) => {
+                    const angle = i * 10;
+                    const isCardinal = angle % 90 === 0;
+                    const isIntermediate = angle % 45 === 0 && !isCardinal;
+
+                    return (
+                      <div
+                        key={i}
+                        className="absolute top-1/2 left-1/2 origin-bottom"
+                        style={{
+                          transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-100px)`,
+                        }}
+                      >
+                        <div
+                          className={`${
+                            isCardinal 
+                              ? 'w-1 h-6 bg-yellow-400' 
+                              : isIntermediate 
+                                ? 'w-0.5 h-4 bg-white/70' 
+                                : 'w-0.5 h-3 bg-white/40'
+                          }`}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {/* Cardinal directions */}
+                  {['N', 'E', 'S', 'W'].map((dir, i) => (
+                    <div
+                      key={dir}
+                      className="absolute top-1/2 left-1/2 text-yellow-400 font-bold text-lg"
+                      style={{
+                        transform: `translate(-50%, -50%) rotate(${i * 90}deg) translateY(-85px) rotate(${-i * 90}deg)`,
+                      }}
+                    >
+                      {dir}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Inner compass disk */}
+                <div 
+                  className="absolute inset-4 rounded-full bg-gradient-to-br from-slate-800 to-slate-900 shadow-inner border border-blue-600 transition-transform duration-100 ease-out"
+                  style={{ transform: `rotate(${-compassHeading}deg)` }}
+                >
+                  {/* Direction indicator */}
+                  <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-yellow-400 font-bold text-base">
+                    N
+                  </div>
+
+                  {/* Center point */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-yellow-400 rounded-full shadow-lg" />
+
+                  {/* Arrow pointer */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                    <div className="w-0.5 h-16 bg-gradient-to-t from-yellow-400 to-yellow-300 rounded-full mx-auto" />
+                    <div className="w-0 h-0 border-l-3 border-r-3 border-b-6 border-l-transparent border-r-transparent border-b-yellow-400 mx-auto -mt-1" />
+                  </div>
+                </div>
+
+                {/* Center decorator */}
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400/30 to-blue-400/30 border-2 border-white/20 shadow-lg" />
+              </div>
+
+              {/* Heading Information */}
+              <div className="text-center">
+                <div className="text-4xl font-bold text-yellow-400 mb-1">
+                  {compassHeading}°
+                </div>
+                <div className="text-xl font-semibold text-white mb-1">
+                  {getDirectionLabel(compassHeading)}
+                </div>
+                <div className="text-sm text-blue-300">
+                  {getCardinalDirection(compassHeading)}
+                </div>
+              </div>
             </div>
 
             <div className="col-span-2 bg-blue-900 rounded-2xl p-6 border-2 border-blue-800">
