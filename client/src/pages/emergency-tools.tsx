@@ -280,12 +280,12 @@ export default function EmergencyToolsPlus() {
 
             <audio
               ref={audioRef}
-              src="https://actions.google.com/sounds/v1/alarms/siren.ogg"
+              src="/siren.mp3"
               preload="auto"
             />
             <audio
               ref={whistleRef}
-              src="https://actions.google.com/sounds/v1/alarms/whistle.ogg"
+              src="/whistle.mp3"
               preload="auto"
             />
           </>
