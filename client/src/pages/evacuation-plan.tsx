@@ -340,10 +340,10 @@ export default function EvacuationPlan() {
 
           <div className="flex gap-2">
             <Button onClick={handleShareLocation} className="flex-1 bg-brand-blue" data-testid="button-share">
-              <Share2 className="w-4 h-4 mr-2" />
-              Share Route
+              <Share2 className="w-4 h-4 mr-2 text-white" />
+              Share
             </Button>
-            <Button onClick={handlePrint} variant="outline" data-testid="button-print">
+            <Button onClick={handlePrint} variant="outline" data-testid="button-print" className="flex-1 bg-brand-blue">
               <Printer className="w-4 h-4" />
             </Button>
           </div>

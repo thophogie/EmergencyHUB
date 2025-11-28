@@ -299,7 +299,7 @@ export default function ReportIncident() {
                     className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${
                       selectedType === type.id
                         ? 'border-yellow-500 bg-yellow-500/20'
-                        : 'border-white/20 bg-blue-900 hover:bg-blue-800'
+                        : 'border-yellow-500 bg-blue-700 hover:bg-blue-800'
                     }`}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -333,7 +333,7 @@ export default function ReportIncident() {
                       className={`flex-1 p-3 rounded-lg border-2 transition-all text-xs font-medium ${
                         severity === level.id
                           ? 'border-yellow-500 bg-yellow-500/20 text-yellow-500'
-                          : 'border-white/20 bg-blue-900 text-white hover:bg-blue-800'
+                          : 'border-white/20 bg-blue-500 text-white hover:bg-blue-800'
                       }`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

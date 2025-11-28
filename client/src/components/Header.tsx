@@ -69,16 +69,25 @@ export function Header() {
           </div>
         </div>
 
-        {/* Time Display */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-1.5 border border-white/20 shadow-inner">
-          <div className="text-yellow-200 font-mono text-sm font-medium">
-            {format(currentTime, "MMMM d, yyyy • h:mm:ss a")}
+        {/* Emergency Hotline Button */}
+        <Drawer>
+          <div className="px-4">
+            <DrawerTrigger asChild>
+              <button className="bg-brand-red hover:bg-brand-red-hover text-white w-full px-12 py-1 rounded-full shadow-lg flex items-center justify-center gap-2 border-1 border-white active:scale-95 transition-transform animate-pulse cursor-pointer touch-manipulation">
+                <PhoneCall size={22} fill="white" />
+                <span className="font-bold text-base uppercase tracking-wide">
+                  Emergency Hotlines!
+                </span>
+              </button>
+            </DrawerTrigger>
           </div>
-        </div>
+          <HotlineDrawerContent />
+        </Drawer>
+
       </div>
 
       {/* Animated Marquee Strip */}
-      <div className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 py-2 w-full overflow-hidden relative z-20 shadow-lg">
+      <div className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 w-full overflow-hidden relative z-20 shadow-lg">
         <div className="marquee-container w-full relative">
           <div className="marquee-content inline-block whitespace-nowrap">
             <span className="text-blue-950 font-extrabold text-sm px-4 flex items-center">
@@ -94,20 +103,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Emergency Hotline Button */}
-      <Drawer>
-        <div className="px-4 py-3 bg-blue-950">
-          <DrawerTrigger asChild>
-            <button className="bg-brand-red hover:bg-brand-red-hover text-white w-full py-2.5 rounded-full shadow-lg flex items-center justify-center gap-2 border-2 border-white active:scale-95 transition-transform animate-pulse cursor-pointer touch-manipulation">
-              <PhoneCall size={22} fill="white" />
-              <span className="font-bold text-base uppercase tracking-wide">
-                Emergency Hotlines!
-              </span>
-            </button>
-          </DrawerTrigger>
-        </div>
-        <HotlineDrawerContent />
-      </Drawer>
 
       {/* Decorative Bottom Accent */}
       <div className="h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
