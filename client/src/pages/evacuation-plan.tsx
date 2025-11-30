@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import "leaflet-omnivore";
+import omnivore from "leaflet-omnivore";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -114,19 +114,17 @@ export default function EvacuationPlan() {
       const kmlUrl = 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1TSspiHSYVJinJHVDOsGicr74ERNCei0&lid=yBi4ab7Ij1k';
       
       // Use omnivore to load KML
-      if (typeof (L as any).omnivore !== 'undefined') {
-        const layer = (L as any).omnivore.kml(kmlUrl, null, L.geoJSON(null, {
-          style: {
-            color: '#FF6B00',
-            weight: 3,
-            opacity: 0.8,
-            fillOpacity: 0.3
-          }
-        }));
-        
-        layer.addTo(map);
-        kmlLayerRef.current = layer;
-      }
+      const layer = omnivore.kml(kmlUrl, null, L.geoJSON(null, {
+        style: {
+          color: '#FF6B00',
+          weight: 3,
+          opacity: 0.8,
+          fillOpacity: 0.3
+        }
+      }));
+      
+      layer.addTo(map);
+      kmlLayerRef.current = layer;
 
       return () => {
         if (kmlLayerRef.current) {
