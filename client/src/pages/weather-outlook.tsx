@@ -493,7 +493,7 @@ const WeatherOutlook = () => {
                     >
                       <Sun className="h-8 w-8 text-yellow-600 mr-3" />
                       <div>
-                        <p className="text-blue-950 text-sm">Heat Index</p>
+                        <p className="text-blue-950 text-sm">Feels Like</p>
                         <p className="font-bold text-blue-950 text-lg">
                           {weatherData.current.feelsLike}°
                         </p>
@@ -506,7 +506,7 @@ const WeatherOutlook = () => {
                     >
                       <Wind className="h-8 w-8 text-yellow-600 mr-3" />
                       <div>
-                        <p className="text-blue-950 text-sm">Heat Index</p>
+                        <p className="text-blue-950 text-sm">Wind Speed</p>
                         <p className="font-bold text-blue-950 text-lg">
                           {weatherData.current.windSpeed} km/h
                         </p>
@@ -519,7 +519,7 @@ const WeatherOutlook = () => {
                     >
                       <Droplets className="h-8 w-8 text-yellow-600 mr-3" />
                       <div>
-                        <p className="text-blue-950 text-sm">Heat Index</p>
+                        <p className="text-blue-950 text-sm">Humidity</p>
                         <p className="font-bold text-blue-950 text-lg">
                           {weatherData.current.humidity}%
                         </p>
