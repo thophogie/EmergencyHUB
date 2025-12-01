@@ -13,13 +13,19 @@ import { sendSMS } from "./twilio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
-  // Initialize default data
-  await storage.initializeGoBagItems();
-  await storage.initializeEvacuationCenters();
-  await storage.initializeHouseholds();
-  await storage.initializeMembers();
-  await storage.initializeHazardZones();
-  await storage.initializePois();
+  // Initialize default data with error handling
+  try {
+    await storage.initializeGoBagItems();
+    await storage.initializeEvacuationCenters();
+    await storage.initializeHouseholds();
+    await storage.initializeMembers();
+    await storage.initializeHazardZones();
+    await storage.initializePois();
+    console.log("Database initialized successfully");
+  } catch (error) {
+    console.error("Failed to initialize database:", error);
+    console.error("Please enable your Neon database endpoint and restart the application");
+  }
 
   // Incident Routes
   app.post("/api/incidents", async (req, res) => {
