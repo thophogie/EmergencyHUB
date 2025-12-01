@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polygon } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import "leaflet-omnivore";
 import { 
   ArrowLeft, 
   MapPin, 
@@ -80,7 +79,6 @@ export default function EvacuationPlan() {
   const [showMedical, setShowMedical] = useState(true);
   const [showPetShelter, setShowPetShelter] = useState(false);
   const [showCharging, setShowCharging] = useState(false);
-  const [showKMLLayer, setShowKMLLayer] = useState(true);
 
   // Family tracking
   const [selectedMember, setSelectedMember] = useState<number | null>(null);
@@ -95,48 +93,6 @@ export default function EvacuationPlan() {
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
     });
   }, []);
-
-  // KML Layer Component
-  function KMLLayer({ show }: { show: boolean }) {
-    const map = useMap();
-    const kmlLayerRef = useRef<L.LayerGroup | null>(null);
-
-    useEffect(() => {
-      if (!show) {
-        if (kmlLayerRef.current) {
-          map.removeLayer(kmlLayerRef.current);
-          kmlLayerRef.current = null;
-        }
-        return;
-      }
-
-      // Load KML data from the Google Maps link
-      const kmlUrl = 'https://www.google.com/maps/d/u/0/kml?forcekml=1&mid=1TSspiHSYVJinJHVDOsGicr74ERNCei0&lid=yBi4ab7Ij1k';
-      
-      // Use omnivore to load KML
-      if (typeof (L as any).omnivore !== 'undefined') {
-        const layer = (L as any).omnivore.kml(kmlUrl, null, L.geoJSON(null, {
-          style: {
-            color: '#FF6B00',
-            weight: 3,
-            opacity: 0.8,
-            fillOpacity: 0.3
-          }
-        }));
-        
-        layer.addTo(map);
-        kmlLayerRef.current = layer;
-      }
-
-      return () => {
-        if (kmlLayerRef.current) {
-          map.removeLayer(kmlLayerRef.current);
-        }
-      };
-    }, [show, map]);
-
-    return null;
-  }
 
   // Fetch data
   const { data: centers = [] } = useQuery<EvacuationCenter[]>({
@@ -194,7 +150,7 @@ export default function EvacuationPlan() {
     },
   });
 
-  
+
 
   const handleShareLocation = async () => {
     if (navigator.share) {
@@ -273,7 +229,7 @@ export default function EvacuationPlan() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              
+
               {/* Evacuation Centers */}
               {centers.map((center) => {
                 if (center.latitude && center.longitude) {
@@ -337,9 +293,6 @@ export default function EvacuationPlan() {
                 }
                 return null;
               })}
-
-              {/* KML Layer */}
-              <KMLLayer show={showKMLLayer} />
             </MapContainer>
           </div>
 
@@ -351,7 +304,7 @@ export default function EvacuationPlan() {
                   Map Layers
                 </Label>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label className="flex items-center gap-2 text-sm">
@@ -380,13 +333,6 @@ export default function EvacuationPlan() {
                     Charging Stations
                   </Label>
                   <Switch checked={showCharging} onCheckedChange={setShowCharging} />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label className="flex items-center gap-2 text-sm">
-                    <MapPin size={14} className="text-orange-500" />
-                    Evacuation Centers (KML)
-                  </Label>
-                  <Switch checked={showKMLLayer} onCheckedChange={setShowKMLLayer} />
                 </div>
               </div>
             </CardContent>
@@ -463,7 +409,7 @@ export default function EvacuationPlan() {
           <Card>
             <CardContent className="p-4 space-y-4">
               <h2 className="text-brand-blue font-bold text-xl">Evacuation Guide</h2>
-              
+
               <div className="space-y-3">
                 <div>
                   <h3 className="font-bold text-brand-blue mb-2">Before You Leave:</h3>
@@ -506,7 +452,7 @@ export default function EvacuationPlan() {
 
         <TabsContent value="faq" className="flex-1 overflow-y-auto p-4 space-y-3">
           <h2 className="text-brand-blue font-bold text-lg mb-3">Frequently Asked Questions</h2>
-          
+
           {[
             {
               q: "When should I evacuate?",
