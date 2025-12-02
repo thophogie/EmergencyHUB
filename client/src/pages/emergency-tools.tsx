@@ -24,26 +24,28 @@ import { useLocation } from "wouter";
 
 export default function EmergencyToolsPlus() {
   const [, setLocation] = useLocation();
-  const [tab, setTab] = useState("Light");
-  const [isFlashlightOn, setFlashlightOn] = useState(false);
-  const [isStrobeOn, setStrobeOn] = useState(false);
-  const [isPoliceBlinkerOn, setPoliceBlinkerOn] = useState(false);
-  const [isSirenOn, setSirenOn] = useState(false);
-  const [isWhistleOn, setWhistleOn] = useState(false);
-  const [locationLink, setLocationLink] = useState("");
-  const [contacts, setContacts] = useState([]);
-  const [newContact, setNewContact] = useState({ name: "", phone: "" });
-  const [showAddContact, setShowAddContact] = useState(false);
-  const [compassHeading, setCompassHeading] = useState(0);
-  const [heartRate, setHeartRate] = useState("--");
-  const [isMeasuringHeartRate, setIsMeasuringHeartRate] = useState(false);
-  const [morseCode, setMorseCode] = useState("");
-  const [morseMessage, setMorseMessage] = useState("SOS");
+  const [tab, setTab] = useState<string>("Light");
+  const [isFlashlightOn, setFlashlightOn] = useState<boolean>(false);
+  const [isStrobeOn, setStrobeOn] = useState<boolean>(false);
+  const [isPoliceBlinkerOn, setPoliceBlinkerOn] = useState<boolean>(false);
+  const [isSirenOn, setSirenOn] = useState<boolean>(false);
+  const [isWhistleOn, setWhistleOn] = useState<boolean>(false);
+  const [locationLink, setLocationLink] = useState<string>("");
 
-  const audioRef = useRef(null);
-  const whistleRef = useRef(null);
-  const [track, setTrack] = useState(null);
-  const compassRef = useRef(null);
+  type Contact = { id: number; name: string; phone: string };
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [newContact, setNewContact] = useState<{ name: string; phone: string }>({ name: "", phone: "" });
+  const [showAddContact, setShowAddContact] = useState<boolean>(false);
+  const [compassHeading, setCompassHeading] = useState<number>(0);
+  const [heartRate, setHeartRate] = useState<string>("--");
+  const [isMeasuringHeartRate, setIsMeasuringHeartRate] = useState<boolean>(false);
+  const [morseCode, setMorseCode] = useState<string>("");
+  const [morseMessage, setMorseMessage] = useState<string>("SOS");
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const whistleRef = useRef<HTMLAudioElement | null>(null);
+  const [track, setTrack] = useState<MediaStreamTrack | null>(null);
+  const compassRef = useRef<HTMLDivElement | null>(null);
 
   // Save contacts to localStorage
   useEffect(() => {
@@ -60,18 +62,19 @@ export default function EmergencyToolsPlus() {
   // 🔦 Flashlight API
   useEffect(() => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-    let stream;
+    let stream: MediaStream | undefined;
     const enableTorch = async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: "environment" },
         });
-        const track = stream.getVideoTracks()[0];
-        setTrack(track);
-        if (track.getCapabilities().torch) {
-          await track.applyConstraints({
-            advanced: [{ torch: isFlashlightOn }],
-          });
+        const t = stream.getVideoTracks()[0];
+        setTrack(t);
+        const caps = t.getCapabilities() as any;
+        if (caps && caps.torch) {
+          await t.applyConstraints({
+            advanced: [{ torch: isFlashlightOn } as any],
+          } as any);
         }
       } catch (err) {
         console.warn("Torch not supported, fallback active.");
@@ -85,30 +88,30 @@ export default function EmergencyToolsPlus() {
 
   // 🚨 Police Blinker Effect
   useEffect(() => {
-    let interval;
+    let interval: number | undefined;
     if (isPoliceBlinkerOn) {
-      interval = setInterval(() => {
-        setFlashlightOn(prev => !prev);
+      interval = window.setInterval(() => {
+        setFlashlightOn((prev) => !prev);
       }, 300);
     }
     return () => {
-      if (interval) clearInterval(interval);
+      if (interval) window.clearInterval(interval);
     };
   }, [isPoliceBlinkerOn]);
 
   // 🧭 Compass
   useEffect(() => {
     if (tab === "Navigation" && 'DeviceOrientationEvent' in window) {
-      const handleOrientation = (event) => {
+      const handleOrientation = (event: DeviceOrientationEvent) => {
         const alpha = event.alpha;
-        if (alpha !== null) {
+        if (alpha !== null && typeof alpha !== 'undefined') {
           setCompassHeading(Math.round(alpha));
         }
       };
 
-      window.addEventListener('deviceorientation', handleOrientation);
+      window.addEventListener('deviceorientation', handleOrientation as EventListener);
       return () => {
-        window.removeEventListener('deviceorientation', handleOrientation);
+        window.removeEventListener('deviceorientation', handleOrientation as EventListener);
       };
     }
   }, [tab]);
@@ -140,15 +143,15 @@ export default function EmergencyToolsPlus() {
     }
   };
 
-  const deleteContact = (id) => {
+  const deleteContact = (id: number) => {
     setContacts(contacts.filter(contact => contact.id !== id));
   };
 
-  const callContact = (phone) => {
+  const callContact = (phone: string) => {
     window.location.href = `tel:${phone}`;
   };
 
-  const smsContact = (phone) => {
+  const smsContact = (phone: string) => {
     window.location.href = `sms:${phone}`;
   };
 
@@ -187,7 +190,7 @@ export default function EmergencyToolsPlus() {
   };
 
   // 🔤 Morse Code Generator
-  const morseCodeMap = {
+  const morseCodeMap: Record<string, string> = {
     'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.',
     'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..',
     'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.',
@@ -201,8 +204,9 @@ export default function EmergencyToolsPlus() {
     const message = morseMessage.toUpperCase();
     let code = '';
     for (let char of message) {
-      if (morseCodeMap[char]) {
-        code += morseCodeMap[char] + ' ';
+      const mapped = morseCodeMap[char] || morseCodeMap[char as string];
+      if (mapped) {
+        code += mapped + ' ';
       }
     }
     setMorseCode(code.trim());
@@ -213,13 +217,13 @@ export default function EmergencyToolsPlus() {
   }, [morseMessage]);
 
   // Enhanced Compass Visualization
-  const getDirectionLabel = (degrees) => {
+  const getDirectionLabel = (degrees: number) => {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
     const index = Math.round(degrees / 45) % 8;
     return directions[index];
   };
 
-  const getCardinalDirection = (degrees) => {
+  const getCardinalDirection = (degrees: number) => {
     if (degrees >= 337.5 || degrees < 22.5) return 'North';
     if (degrees >= 22.5 && degrees < 67.5) return 'Northeast';
     if (degrees >= 67.5 && degrees < 112.5) return 'East';

@@ -10,7 +10,6 @@ import {
   Activity,
   Car,
   Plane,
-  Virus,
   Droplets,
   Zap,
   AlertTriangle,
@@ -25,41 +24,7 @@ type Document = {
   modifiedTime: string;
   webViewLink: string;
 };
-
-const mockDocuments: Document[] = [
-  {
-    id: "1",
-    name: "Emergency Response Manual.pdf",
-    mimeType: "application/pdf",
-    size: "2.4 MB",
-    modifiedTime: "2023-10-15",
-    webViewLink: "#",
-  },
-  {
-    id: "2",
-    name: "First Aid Procedures.docx",
-    mimeType: "application/vnd.google-apps.document",
-    size: "1.8 MB",
-    modifiedTime: "2023-11-02",
-    webViewLink: "#",
-  },
-  {
-    id: "3",
-    name: "Disaster Preparedness Guide.pptx",
-    mimeType: "application/vnd.google-apps.presentation",
-    size: "5.2 MB",
-    modifiedTime: "2023-09-28",
-    webViewLink: "#",
-  },
-  {
-    id: "4",
-    name: "Evacuation Plans.pdf",
-    mimeType: "application/pdf",
-    size: "3.1 MB",
-    modifiedTime: "2023-12-10",
-    webViewLink: "#",
-  },
-];
+// Documents are now fetched from the server endpoint `/api/public-documents`.
 
 const EMERGENCY_GUIDES = [
   {
@@ -174,22 +139,24 @@ export default function LearningMaterials() {
   const [, setLocation] = useLocation();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGuide, setSelectedGuide] = useState(null);
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [selectedGuide, setSelectedGuide] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate API call to Google Drive
+    // Fetch documents from the server (attached_assets)
     const fetchDocuments = async () => {
       setLoading(true);
-      // In a real implementation, you would use:
-      // const response = await fetch(`https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents&key=YOUR_API_KEY`);
-      // const data = await response.json();
-
-      // Using mock data for demonstration
-      setTimeout(() => {
-        setDocuments(mockDocuments);
+      try {
+        const resp = await fetch("/api/public-documents");
+        if (!resp.ok) throw new Error("Failed to fetch documents");
+        const data: Document[] = await resp.json();
+        setDocuments(data);
+      } catch (err) {
+        console.error("Failed to load public documents:", err);
+        setDocuments([]);
+      } finally {
         setLoading(false);
-      }, 1000);
+      }
     };
 
     fetchDocuments();
@@ -211,12 +178,12 @@ export default function LearningMaterials() {
     return "Document";
   };
 
-  const toggleSection = (sectionTitle) => {
+  const toggleSection = (sectionTitle: string) => {
     setExpandedSection(expandedSection === sectionTitle ? null : sectionTitle);
   };
 
   if (selectedGuide) {
-    const guide = EMERGENCY_GUIDES.find(g => g.id === selectedGuide);
+    const guide = EMERGENCY_GUIDES.find(g => g.id === selectedGuide)!;
     return (
       <div className="min-h-screen bg-blue-950 flex flex-col max-w-md mx-auto shadow-2xl relative">
         <header className="bg-blue-950 text-white p-4 sticky top-0 z-20 shadow-md flex items-center gap-3 border-b-2 border-yellow-500">
@@ -242,7 +209,7 @@ export default function LearningMaterials() {
                 className="w-full p-4 text-left flex items-center justify-between hover:bg-blue-800/50 transition-colors"
               >
                 <h3 className="font-bold text-white">{section.title}</h3>
-                <ChevronRight 
+                  <ChevronRight 
                   size={20} 
                   className={`text-yellow-500 transition-transform ${expandedSection === section.title ? 'rotate-90' : ''}`} 
                 />

@@ -5,24 +5,45 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
+// Replit plugins only for dev/Replit environment
+let replitPlugins: any[] = [];
+if (process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined) {
+  try {
+    const { cartographer } = require("@replit/vite-plugin-cartographer");
+    const { devBanner } = require("@replit/vite-plugin-dev-banner");
+    replitPlugins = [cartographer(), devBanner()];
+  } catch {
+    // Silently fail if plugins not available in production
+  }
+}
+
 export default defineConfig({
   plugins: [
     react(),
     runtimeErrorOverlay(),
     tailwindcss(),
     metaImagesPlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
-            m.devBanner(),
-          ),
-        ]
-      : []),
+    ...replitPlugins,
   ],
+  optimizeDeps: {
+    // Pre-bundle Radix UI components to avoid export issues
+    include: [
+      "@radix-ui/react-accordion",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-separator",
+      "@radix-ui/react-context-menu",
+      "@radix-ui/react-toggle-group",
+      "@radix-ui/react-checkbox",
+      "@radix-ui/react-toggle",
+      "@radix-ui/react-scroll-area",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-slider",
+      "@radix-ui/react-tabs",
+      "@radix-ui/react-label",
+      "@radix-ui/react-navigation-menu",
+      "@radix-ui/react-select",
+    ],
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),

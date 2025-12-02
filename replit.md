@@ -42,7 +42,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Storage
 
-**Database**: PostgreSQL accessed via Neon's serverless driver (`@neondatabase/serverless`).
+**Database**: PostgreSQL accessed via Supabase (`postgres` driver with Drizzle ORM).
 
 **ORM**: Drizzle ORM v0.39+ with Drizzle Kit for schema management and migrations. The schema is defined in TypeScript and shared between client and server.
 
@@ -58,7 +58,7 @@ Preferred communication style: Simple, everyday language.
 
 ### External Dependencies
 
-**Database Service**: Neon Serverless PostgreSQL (connection string via `DATABASE_URL` environment variable).
+**Database Service**: Supabase PostgreSQL (connection string via `DATABASE_URL` environment variable).
 
 **UI Component Libraries**: 
 - Radix UI primitives (accordion, alert-dialog, avatar, checkbox, dialog, dropdown-menu, drawer, popover, progress, select, switch, tabs, toast, tooltip, etc.)

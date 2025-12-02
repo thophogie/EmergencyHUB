@@ -427,7 +427,7 @@ const WeatherOutlook = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="p-4 rounded-2xl flex items-center justify-between animate-pulse backdrop-blur-sm"
-                style={{ backgroundColor: config.color + "30" }}
+                style={{ backgroundColor: config.color + "30" } as any}
                 data-testid="banner-alert"
               >
                 <div className="flex-1">
@@ -443,7 +443,7 @@ const WeatherOutlook = () => {
                   whileTap={{ scale: 0.9 }}
                   onClick={() => setShowAlert(false)}
                   className="ml-2 p-1 hover:opacity-70 transition-opacity rounded-full"
-                  style={{ color: config.color, backgroundColor: config.color + "20" }}
+                  style={{ color: config.color, backgroundColor: config.color + "20" } as any}
                   data-testid="button-close-alert"
                 >
                   <X size={20} />

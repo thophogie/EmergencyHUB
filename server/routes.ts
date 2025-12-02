@@ -1,6 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+// storage is imported lazily inside registerRoutes so we can skip DB initialization
+// when running in environments where the database is unavailable.
+import fs from "fs/promises";
+import path from "path";
 import { 
   insertIncidentSchema, 
   insertGoBagItemSchema,
@@ -12,25 +15,45 @@ import { z } from "zod";
 import { sendSMS } from "./twilio";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  
-  // Initialize default data with error handling
-  try {
-    await storage.initializeGoBagItems();
-    await storage.initializeEvacuationCenters();
-    await storage.initializeHouseholds();
-    await storage.initializeMembers();
-    await storage.initializeHazardZones();
-    await storage.initializePois();
-    console.log("Database initialized successfully");
-  } catch (error) {
-    console.error("Failed to initialize database:", error);
-    console.error("Please enable your Neon database endpoint and restart the application");
+  // Lazily import storage so we can optionally skip DB usage in test environments
+  let storage: any = null;
+  if (process.env.DISABLE_DB === "1") {
+    console.warn("DISABLE_DB=1 set — skipping database initialization and routes that require the DB.");
+  } else {
+    try {
+      const mod = await import("./storage");
+      storage = mod.storage;
+
+      // Initialize default data with error handling
+      try {
+        await storage.initializeGoBagItems();
+        await storage.initializeEvacuationCenters();
+        await storage.initializeHouseholds();
+        await storage.initializeMembers();
+        await storage.initializeHazardZones();
+        await storage.initializePois();
+        console.log("Database initialized successfully");
+      } catch (error) {
+        console.error("Failed to initialize database:", error);
+        console.error("Please ensure your Supabase database endpoint is running and the DATABASE_URL is correctly configured.");
+      }
+    } catch (err) {
+      console.error("Could not import storage module:", err);
+    }
   }
 
+  const requireStorage = (res: any) => {
+    if (!storage) {
+      res.status(503).json({ error: "Database unavailable" });
+      return false;
+    }
+    return true;
+  };
   // Incident Routes
   app.post("/api/incidents", async (req, res) => {
     try {
       const incident = insertIncidentSchema.parse(req.body);
+      if (!requireStorage(res)) return;
       const newIncident = await storage.createIncident(incident);
       res.json(newIncident);
     } catch (error) {
@@ -43,6 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/incidents", async (req, res) => {
     try {
+      if (!requireStorage(res)) return;
       const incidents = await storage.getIncidents();
       res.json(incidents);
     } catch (error) {
@@ -53,6 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Go Bag Routes
   app.get("/api/go-bag-items", async (req, res) => {
     try {
+      if (!storage) return res.status(503).json({ error: "Database unavailable" });
       const items = await storage.getGoBagItems();
       res.json(items);
     } catch (error) {
@@ -67,6 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (typeof checked !== "boolean") {
         return res.status(400).json({ error: "checked must be a boolean" });
       }
+      if (!storage) return res.status(503).json({ error: "Database unavailable" });
       const item = await storage.updateGoBagItem(id, checked);
       res.json(item);
     } catch (error) {
@@ -77,6 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Evacuation Centers Routes
   app.get("/api/evacuation-centers", async (req, res) => {
     try {
+      if (!requireStorage(res)) return;
       const centers = await storage.getEvacuationCenters();
       res.json(centers);
     } catch (error) {
@@ -91,6 +118,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!status || typeof status !== "string") {
         return res.status(400).json({ error: "status is required" });
       }
+      if (!requireStorage(res)) return;
       const center = await storage.updateEvacuationCenter(id, status);
       res.json(center);
     } catch (error) {
@@ -98,9 +126,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public Documents (list files in attached_assets)
+  app.get("/api/public-documents", async (req, res) => {
+    try {
+      const assetsDir = path.resolve(__dirname, "..", "attached_assets");
+      const filenames = await fs.readdir(assetsDir);
+      const fileInfos = await Promise.all(
+        filenames.map(async (filename) => {
+          try {
+            const filePath = path.join(assetsDir, filename);
+            const stats = await fs.stat(filePath);
+            const sizeKb = Math.max(1, Math.round(stats.size / 1024));
+            const mime = (() => {
+              const lower = filename.toLowerCase();
+              if (lower.endsWith(".pdf")) return "application/pdf";
+              if (lower.endsWith(".kml")) return "application/vnd.google-earth.kml+xml";
+              if (lower.endsWith(".md") || lower.endsWith(".txt")) return "text/plain";
+              return "application/octet-stream";
+            })();
+
+            return {
+              id: filename,
+              name: filename,
+              mimeType: mime,
+              size: `${sizeKb} KB`,
+              modifiedTime: stats.mtime.toISOString(),
+              webViewLink: `${req.protocol}://${req.get("host")}/assets/${encodeURIComponent(filename)}`,
+            };
+          } catch (innerErr) {
+            return null;
+          }
+        })
+      );
+
+      const filtered = fileInfos.filter(Boolean);
+      res.json(filtered);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to list public documents" });
+    }
+  });
+
   // Household Routes
   app.get("/api/households", async (req, res) => {
     try {
+      if (!requireStorage(res)) return;
       const households = await storage.getHouseholds();
       res.json(households);
     } catch (error) {
@@ -111,6 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/households", async (req, res) => {
     try {
       const household = insertHouseholdSchema.parse(req.body);
+      if (!requireStorage(res)) return;
       const newHousehold = await storage.createHousehold(household);
       res.json(newHousehold);
     } catch (error) {
@@ -125,6 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/households/:householdId/members", async (req, res) => {
     try {
       const householdId = parseInt(req.params.householdId);
+      if (!requireStorage(res)) return;
       const members = await storage.getMembers(householdId);
       res.json(members);
     } catch (error) {
@@ -135,6 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/members", async (req, res) => {
     try {
       const member = insertMemberSchema.parse(req.body);
+      if (!requireStorage(res)) return;
       const newMember = await storage.createMember(member);
       res.json(newMember);
     } catch (error) {
@@ -152,6 +224,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!status) {
         return res.status(400).json({ error: "status is required" });
       }
+      if (!requireStorage(res)) return;
       const member = await storage.updateMemberStatus(id, status, location);
       res.json(member);
     } catch (error) {
@@ -163,6 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/members/:memberId/check-ins", async (req, res) => {
     try {
       const memberId = parseInt(req.params.memberId);
+      if (!requireStorage(res)) return;
       const checkIns = await storage.getCheckIns(memberId);
       res.json(checkIns);
     } catch (error) {
@@ -173,6 +247,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/check-ins", async (req, res) => {
     try {
       const checkIn = insertCheckInSchema.parse(req.body);
+      if (!requireStorage(res)) return;
       const newCheckIn = await storage.createCheckIn(checkIn);
       res.json(newCheckIn);
     } catch (error) {
@@ -186,6 +261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Hazard Zone Routes
   app.get("/api/hazard-zones", async (req, res) => {
     try {
+      if (!requireStorage(res)) return;
       const zones = await storage.getHazardZones();
       res.json(zones);
     } catch (error) {
@@ -197,6 +273,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pois", async (req, res) => {
     try {
       const type = req.query.type as string | undefined;
+      if (!requireStorage(res)) return;
       const pois = await storage.getPois(type);
       res.json(pois);
     } catch (error) {

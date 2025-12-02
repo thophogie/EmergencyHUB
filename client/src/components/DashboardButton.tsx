@@ -1,8 +1,18 @@
-function DashboardButton({
+import React from "react";
+import { motion } from "framer-motion";
+
+interface DashboardButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  index?: number;
+}
+
+export default function DashboardButton({
   icon,
   label,
   onClick,
-  index,
+  index = 0,
 }: DashboardButtonProps) {
   return (
     <motion.button
@@ -20,7 +30,6 @@ function DashboardButton({
         {label}
       </span>
 
-      {/* Decorative corner element */}
       <div className="absolute bottom-2 right-2 w-5 h-5 border-r-2 border-b-2 border-yellow-400 rounded-br-lg"></div>
     </motion.button>
   );

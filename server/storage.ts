@@ -178,7 +178,7 @@ export class DBStorage implements IStorage {
     const existing = await db.select().from(households);
     if (existing.length === 0) {
       await db.insert(households).values([
-        { name: "Sample Household", address: "123 Main Street, Pio Duran, Albay" }
+        { name: "Sample Household" }
       ]);
     }
   }

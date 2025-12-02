@@ -1,6 +1,8 @@
 import { type Server } from "node:http";
 
 import express, { type Express, type Request, Response, NextFunction } from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes";
 
 export function log(message: string, source = "express") {
@@ -57,6 +59,12 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// Serve attached assets (public documents, KML, etc.) - ESM-safe __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const assetsDir = path.resolve(__dirname, "..", "attached_assets");
+app.use("/assets", express.static(assetsDir));
 
 export default async function runApp(
   setup: (app: Express, server: Server) => Promise<void>,

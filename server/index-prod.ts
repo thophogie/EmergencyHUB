@@ -1,3 +1,6 @@
+// Load environment variables from .env.local before anything else
+import "./load-env.ts";
+
 import fs from "node:fs";
 import { type Server } from "node:http";
 import path from "node:path";

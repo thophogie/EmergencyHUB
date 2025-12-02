@@ -124,24 +124,42 @@ const WEATHER_CONDITIONS = [
   { id: "foggy", label: "Foggy", icon: EyeOff },
 ];
 
+type IncidentDetails = {
+  vehicleType: string;
+  locationType: string;
+  weatherCondition: string;
+  estimatedDamage: string;
+  injuries: string;
+  fatalities: string;
+  responseAgencies: string[];
+  specialNotes: string;
+};
+
+type ContactInfo = {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+};
+
 export default function ReportIncident() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [selectedType, setSelectedType] = useState(null);
-  const [severity, setSeverity] = useState(null);
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [description, setDescription] = useState("");
-  const [photos, setPhotos] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [numberOfPeople, setNumberOfPeople] = useState("");
-  const [contactInfo, setContactInfo] = useState({ 
-    name: "", 
-    phone: "", 
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [severity, setSeverity] = useState<string | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState<boolean>(false);
+  const [description, setDescription] = useState<string>("");
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [videos, setVideos] = useState<File[]>([]);
+  const [numberOfPeople, setNumberOfPeople] = useState<string>("");
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
+    name: "",
+    phone: "",
     email: "",
     address: ""
   });
-  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
-  const [incidentDetails, setIncidentDetails] = useState({
+  const [showAdditionalFields, setShowAdditionalFields] = useState<boolean>(false);
+  const [incidentDetails, setIncidentDetails] = useState<IncidentDetails>({
     vehicleType: "",
     locationType: "",
     weatherCondition: "",
@@ -151,9 +169,9 @@ export default function ReportIncident() {
     responseAgencies: [],
     specialNotes: ""
   });
-  const [showSensitiveFields, setShowSensitiveFields] = useState(false);
-  const [userLocation, setUserLocation] = useState(null);
-  const [userLocationError, setUserLocationError] = useState(null);
+  const [showSensitiveFields, setShowSensitiveFields] = useState<boolean>(false);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocationError, setUserLocationError] = useState<string | null>(null);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -169,10 +187,10 @@ export default function ReportIncident() {
     );
   }, []);
 
-  const submitIncident = useMutation({
-    mutationFn: async (data) => {
+  const submitIncident = useMutation<any, any, any>({
+    mutationFn: async (data: any) => {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       return { success: true };
     },
     onSuccess: () => {
@@ -191,8 +209,8 @@ export default function ReportIncident() {
     },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.SyntheticEvent) => {
+    if (e && typeof (e as any).preventDefault === "function") (e as any).preventDefault();
     if (!selectedType || !description) {
       toast({
         title: "Missing Information",
@@ -215,45 +233,45 @@ export default function ReportIncident() {
     });
   };
 
-  const handlePhotoUpload = (e) => {
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newPhotos = Array.from(e.target.files);
-      setPhotos(prev => [...prev, ...newPhotos]);
+      const newPhotos = Array.from(e.target.files) as File[];
+      setPhotos((prev) => [...prev, ...newPhotos]);
     }
   };
 
-  const handleVideoUpload = (e) => {
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newVideos = Array.from(e.target.files);
-      setVideos(prev => [...prev, ...newVideos]);
+      const newVideos = Array.from(e.target.files) as File[];
+      setVideos((prev) => [...prev, ...newVideos]);
     }
   };
 
-  const removePhoto = (index) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+  const removePhoto = (index: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const getTypeIcon = (typeId) => {
+  const getTypeIcon = (typeId: string) => {
     const type = INCIDENT_TYPES.find(t => t.id === typeId);
     return type ? type.icon : AlertTriangle;
   };
 
-  const getVehicleIcon = (vehicleId) => {
-    const vehicle = VEHICLE_TYPES.find(v => v.id === vehicleId);
+  const getVehicleIcon = (vehicleId: string) => {
+    const vehicle = VEHICLE_TYPES.find((v) => v.id === vehicleId);
     return vehicle ? vehicle.icon : Car;
   };
 
-  const getLocationIcon = (locationId) => {
-    const location = LOCATION_TYPES.find(l => l.id === locationId);
+  const getLocationIcon = (locationId: string) => {
+    const location = LOCATION_TYPES.find((l) => l.id === locationId);
     return location ? location.icon : MapPin;
   };
 
-  const getWeatherIcon = (weatherId) => {
-    const weather = WEATHER_CONDITIONS.find(w => w.id === weatherId);
+  const getWeatherIcon = (weatherId: string) => {
+    const weather = WEATHER_CONDITIONS.find((w) => w.id === weatherId);
     return weather ? weather.icon : Sun;
   };
 
-  const handleLocationChange = (e) => {
+  const handleLocationChange = (e?: React.MouseEvent<HTMLButtonElement>) => {
     // This function would ideally open a map to select a new location.
     // For now, it just logs a message.
     console.log("Changing location is not implemented yet.");
@@ -798,8 +816,6 @@ export default function ReportIncident() {
           className="flex-[2] bg-yellow-500 hover:bg-yellow-400 text-blue-950 font-bold h-12 rounded-xl shadow-md shadow-yellow-500/20 transition-all"
           onClick={handleSubmit}
           disabled={!selectedType || submitIncident.isPending}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
         >
           {submitIncident.isPending ? (
             <span className="flex items-center gap-2">

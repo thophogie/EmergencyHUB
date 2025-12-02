@@ -32,7 +32,7 @@ function DashboardButton({
       whileTap={{ scale: 0.97 }}
       onClick={onClick}
       className="flex flex-col items-center justify-center bg-gradient-to-br from-white to-blue-50 rounded-2xl p-4 shadow-[0_6px_0_0_rgba(59,130,246,0.5)] active:shadow-none active:translate-y-[6px] transition-all border-2 border-yellow-500 min-h-[140px] w-full cursor-pointer relative overflow-hidden touch-manipulation"
-      style={{ touchAction: 'manipulation' }}
+      style={{ touchAction: 'manipulation' } as any}
     >
       <div className="text-blue-950 mb-2">
         {icon}
